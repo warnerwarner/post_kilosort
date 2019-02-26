@@ -30,7 +30,8 @@ for cluster in good_clusters:
 	template_maxes = {}
 	for clus_temp in c_templates:
 		chan_sums = [abs(sum(j)) for j in clus_temp.T]
-		template_maxes[max(chan_sums)] = np.argmax(chan_sums)
+		print(len(chan_sums))
+		template_maxes[max(chan_sums)] = np.argmax(chan_sums)+1 
 	chan_max = template_maxes[max(template_maxes.keys())]
 	units[cluster] = {'max_chan':chan_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 

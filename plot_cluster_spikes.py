@@ -33,6 +33,8 @@ for index, time in enumerate(times):
 	if index % 5000 == 0:
 		print(index)
 
+print(cluster_num, max_chan)
+
 for spike in spikes:
 	plt.plot(x, spike, color='gray')
 avg_spike = np.mean(spikes, axis=0)
