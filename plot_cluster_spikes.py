@@ -11,7 +11,7 @@ import sys
 available_cpu_count = len(psutil.Process().cpu_affinity())
 os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
-home_dir = '/home/tom/d/Open_ephys_testing_ground_data/190222/2019-02-22_14-15-45'
+home_dir = '/home/camp/warnert/working/Recordings/190222/2019-02-22_14-15-45'
 
 clusterbank = pickle.Unpickler(open(os.path.join(home_dir, 'clusterbank.pkl'), 'rb')).load()
 chan_dict = clusterbank['chan_dict']
