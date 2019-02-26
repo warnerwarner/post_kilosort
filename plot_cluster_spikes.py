@@ -20,7 +20,7 @@ clusters = clusterbank['units']
 x = np.arange(-1, 2, 1/30)
 
 cluster_num = list(sys.argv)[1]
-
+cluster_num = int(cluster_num)
 
 cluster = clusters[cluster_num]
 max_chan = cluster['max_chan']
