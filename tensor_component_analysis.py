@@ -14,6 +14,7 @@ rank = int(list(sys.argv)[1])
 home_dir = '/home/camp/warnert/working/Recordings/190222/2019-02-22_14-15-45'
 
 tensor = np.fromfile(os.path.join(home_dir, 'good_cluster_tensor.npy'))
+print(tensor.shape)
 
 als = tt.cp_als(tensor, rank=rank, verbose=True)
 
