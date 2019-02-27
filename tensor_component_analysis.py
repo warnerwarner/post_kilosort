@@ -5,6 +5,10 @@ import psutil
 import sys
 import pickle
 
+available_cpu_count = len(psutil.Process().cpu_affinity())
+os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
+
+
 rank = int(list(sys.argv)[1])
 
 home_dir = '/home/camp/warnert/working/Recordings/190222/2019-02-22_14-15-45'
