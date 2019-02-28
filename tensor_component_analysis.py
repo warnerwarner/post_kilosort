@@ -18,7 +18,7 @@ tensor = np.load(os.path.join(home_dir, 'good_cluster_tensor.npy'))
 print(tensor.shape)
 
 als = tt.cp_als(tensor, rank=rank, verbose=True)
-exit_path = str(os.path.join(home_dir, str(job_id)))
-if not os.path.exits(exit_path):
+exit_path = os.path.join(home_dir, str(job_id))
+if not os.path.exists(exit_path):
 	os.makedirs(exit_path)
 pickle.dump(als, open(os.path.join(exit_path, 'tca_output_rank_%d' % rank), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
