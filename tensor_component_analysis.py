@@ -12,7 +12,7 @@ os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 rank = int(list(sys.argv)[2])
 job_id = int(list(sys.argv)[1])
 
-home_dir = '/home/camp/warnert/working/Recordings/190222/2019-02-22_14-15-45'
+home_dir = '/home/camp/warnert/working/Recordings/190211/2019-02-11_16-35-46'
 
 tensor = np.load(os.path.join(home_dir, 'good_cluster_tensor.npy'))
 print(tensor.shape)
