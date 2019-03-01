@@ -6,8 +6,8 @@
 #SBATCH --error=/home/camp/warnert/outputs/error_%a.txt
 #SBATCH --ntasks=1
 #SBATCH --time=24:00:00
-#SBATCH --mem=250G
-#SBATCH --partition=hmem
+#SBATCH --mem=100G
+#SBATCH --partition=compute
 #
 
 python tensor_component_analysis.py $SLURM_ARRAY_JOB_ID $SLURM_ARRAY_TASK_ID
