@@ -8,7 +8,7 @@ import pickle
 available_cpu_count = len(psutil.Process().cpu_affinity())
 os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
-max_rank = int(list(sys.argv[3]))
+max_rank = int(list(sys.argv)[3])
 rank = int(list(sys.argv)[2])
 job_id = int(list(sys.argv)[1])
 
