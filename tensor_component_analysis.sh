@@ -10,4 +10,4 @@
 #SBATCH --partition=compute
 #
 
-python tensor_component_analysis.py $SLURM_ARRAY_JOB_ID $SLURM_ARRAY_TASK_ID
+python tensor_component_analysis.py $SLURM_ARRAY_JOB_ID $SLURM_ARRAY_TASK_ID $SLURM_ARRAY_TASK_MAX
