@@ -1,7 +1,7 @@
 #!/bin/bash
 # 
 #SBATCH --job-name=tca
-#SBATCH --array=1-50		## N_TASKS_TOTAL: SET THIS TO THE NUMBER OF INDEPENDENT JOBS,TYPICLLAY 100,SEE BELOW N_TASKS_TOTAL
+#SBATCH --array=1-100		## N_TASKS_TOTAL: SET THIS TO THE NUMBER OF INDEPENDENT JOBS,TYPICLLAY 100,SEE BELOW N_TASKS_TOTAL
 #SBATCH --output=/home/camp/warnert/outputs/output_%a.txt	## 
 #SBATCH --error=/home/camp/warnert/outputs/error_%a.txt
 #SBATCH --ntasks=1
