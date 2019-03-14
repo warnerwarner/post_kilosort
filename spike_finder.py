@@ -17,15 +17,14 @@ def bandpass_data(data, fs= 30000, highcut=6000, lowcut = 300, order = 3):
 
 def spike_find(bp_data):
 	spike_times = []
-	for i in datas:
-		sd = np.median(abs(i)/0.6745)
-		data_times = []
-		prev_spike = -30
-		for index, j in enumerate(i):
-			if j < -4*sd and index-prev_spike > 30:
-				data_times.append(index)
-				prev_spike = index
-		spike_times.append(data_times)
+	sd = np.median(abs(bp_data)/0.6745)
+	data_times = []
+	prev_spike = -30
+	for index, j in enumerate(bp_data):
+		if j < -4*sd and index-prev_spike > 30:
+			data_times.append(index)
+			prev_spike = index
+	spike_times.append(data_times)
 	return spike_times
 
 
