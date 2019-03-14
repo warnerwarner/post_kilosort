@@ -27,24 +27,26 @@ def spike_find(bp_data):
 	spike_times.append(data_times)
 	return spike_times
 
-chan = list(sys.argv)[1]
-chan = int(chan)
 
 available_cpu_count = len(psutil.Process().cpu_affinity())
 os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
 
 
+chans = [1, 17, 8, 24, 16, 2, 29, 32, 7, 26, 3, 15, 21, 19, 11, 23, 14, 12, 28, 30, 6, 18, 9, 13, 22, 25, 5, 27, 10, 4, 31, 20]
 
 home_dir = '/home/camp/warnert/working/Recordings/190211/2019-02-11_16-35-46'
 
-channel_base = os.path.join(home_dir, '100_CH%d.continuous' % chan)
+all_spike_times = []
+for chan in chans:
+	channel_base = os.path.join(home_dir, '100_CH%d.continuous' % chan)
 
-chan_rec = oe.loadContinuous2(channel_base)
+	chan_rec = oe.loadContinuous2(channel_base)
 
-data =chan_rec['data']
-bp_data = bandpass_data(data)
-spike_times = spike_find(bp_data)
+	data =chan_rec['data']
+	bp_data = bandpass_data(data)
+	spike_times = spike_find(bp_data)
+	all_spike_times.append(spike_times)
 
-spike_times np.array(spike_times)
-np.save(os.path.join(home_dir, 'ch_%d_spike_times.npy' % chan), spike_times)
+all_spike_times = np.array(all_spike_times)
+np.save(os.path.join(home_dir, 'channel_spike_times.npy'), all_spike_times)
