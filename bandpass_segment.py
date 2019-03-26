@@ -9,10 +9,14 @@ import psutil
 import numpy as np
 import sys
 
+available_cpu_count = len(psutil.Process().cpu_affinity())
+os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
+
+
 chan_num = list(sys.argv)[1]
 chan_num = int(chan_num)
 
-home_dir = ''
+home_dir = '/home/camp/warnert/working/Recordings/190325/2019-03-25_16-57-37'
 
 chan = oe.loadContinuous2(os.path.join(home_dir, '100_CH%d.continuous' % chan_num))
 data = chan['data']
