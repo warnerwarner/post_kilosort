@@ -4,7 +4,7 @@ import pickle
 import csv
 
 
-home_dir = "/home/tom/d/Open_ephys_testing_ground_data/190211/2019-02-11_16-35-46"
+home_dir = "/home/camp/warnert/working/Recordings/190325/2019-03-25_16-57-37"
 
 cluster_tsv = os.path.join(home_dir, 'cluster_group.tsv')
 
@@ -24,7 +24,7 @@ for i in tsv_read:
 print(good_clusters)
 
 all_clusters= np.concatenate((good_clusters, mua_clusters, noise_clusters))
-header = {'home_dir':home_dir, 'date':190222, 'good_clusters':good_clusters, 'mua_clusters':mua_clusters, 'noise_clusters':noise_clusters}
+header = {'home_dir':home_dir, 'date':190325, 'good_clusters':good_clusters, 'mua_clusters':mua_clusters, 'noise_clusters':noise_clusters}
 
 times = np.load(os.path.join(home_dir, 'spike_times.npy'))
 clusters = np.load(os.path.join(home_dir, 'spike_clusters.npy'))
