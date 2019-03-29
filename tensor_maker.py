@@ -30,7 +30,7 @@ bin_response = np.zeros([len(clusters), len(trial_channel['data'])])
 for index, c in enumerate(clusters):
 	cluster = clusters[c]
 	times = cluster['times']
-	bin_response[index][time] = 1
+	bin_response[index][times] = 1
 
 # Make a rolling sum of the spikes
 rolling_resp = pandas.DataFrame(bin_response)
