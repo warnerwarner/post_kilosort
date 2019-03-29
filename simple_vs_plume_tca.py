@@ -35,8 +35,8 @@ simp_tensor = tensor[:, :, full_simps]
 plume_tensor = tensor[:, :, full_plumes]
 
 #full_tca = tt.cp_als(tensor)
-simp_tca = tt.cp_als(simp_tensor)
-#plume_tca = tt.cp_als(plume_tensor)
+#simp_tca = tt.cp_als(simp_tensor)
+plume_tca = tt.cp_als(plume_tensor)
 
 #tcas = {'full':full_tca, 'simps':simp_tca, 'plume':plume_tca}
 
@@ -44,5 +44,5 @@ output_dir = os.path.join(home_dir, job_id)
 if not os.path.isdir(output_dir):
 	os.mkdir(output_dir)
 
-pickle.dump(simp_tca, open(os.path.join(output_dir, 'tca_rank_%d'+job_id+'.pkl' % rank)))
+pickle.dump(plume_tca, open(os.path.join(output_dir, 'tca_rank_%d'+job_id+'.pkl' % rank)))
 
