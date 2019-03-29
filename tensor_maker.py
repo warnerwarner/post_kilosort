@@ -18,10 +18,10 @@ fs = 30000 # Sampling rate
 window = 30000
 
 # Clusterbank to get the good units and times
-clusterbank = pickle.Unpickler(open(oe.path.join(home_dir, 'clusterbank.pkl'), 'rb')).load()
+clusterbank = pickle.Unpickler(open(os.path.join(home_dir, 'clusterbank.pkl'), 'rb')).load()
 
 clusters = clusterbank['good_units']
-trial_channel = oe.loadContinuous2(home_dir, '100_CH1.continuous')
+trial_channel = oe.loadContinuous2(os.path.join(home_dir, '100_CH1.continuous'))
 
 # Make a bin response which are 0 for when theres no spike and 1 for when there is
 bin_response = np.zeros([len(clusters), len(trial_channel['data'])])
