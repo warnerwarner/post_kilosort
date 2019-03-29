@@ -14,8 +14,8 @@ os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
 home_dir = '/home/camp/warnert/working/Recordings/190325/2019-03-25_16-57-37'
 
-additonal_channels = []
-add_chans = ['100_ADC%d.continuous' % i for i in range(2, 6)]
+additonal_channels = ['100_ADC%d.continuous' % i for i in range(2, 6)]
+add_chans = []
 
 
 for i in additonal_channels:
@@ -36,7 +36,7 @@ prev_value = - trial_size*fs
 
 
 for index, i in enumerate(summed_valves):
-	if i > 0 and index - prev_value > 1.1*(trial_size*fs):
+	if i > 1 and index - prev_value > 1.1*(trial_size*fs):
 		starts.append(index)
 		prev_value = index
 
