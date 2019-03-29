@@ -54,7 +54,7 @@ trial_resp_array = spike_resp_array.T[:, trial_times]
 print('made trial resp array')
 
 # Find the 
-tensor = np.zeros(len(clusters), trial_window_size, len(trial_starts))
+tensor = np.zeros((len(clusters), trial_window_size, len(trial_starts)))
 for i in range(len(trial_starts)):
 	tensor[:, :, i] = trial_resp_array[:, i*trial_window_size:(i+1)*trial_window_size]
 print('assigned to tensor')
