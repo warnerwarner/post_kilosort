@@ -38,9 +38,9 @@ print('filled bin_response')
 rolling_resp = np.zeros(bin_response.shape)
 
 for c in range(len(bin_response)):
-	b = bin_response[j].cumsum()
+	b = bin_response[c].cumsum()
 	b[window:] = b[window:] - b[:-window]
-	rolling_resp[j] = b
+	rolling_resp[c] = b
 # Make a rolling sum of the spikes
 # rolling_resp = pandas.DataFrame(bin_response)
 # print('change bin_response into df')
