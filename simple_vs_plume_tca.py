@@ -22,7 +22,7 @@ trialbank = pickle.Unpickler(open('/home/camp/warnert/working/Recordings/190325/
 plumes = []
 for index, i, in enumerate(trialbank):
 	for j in i[1]:
-		if j['type'] == 'plume':
+		if j['type'] == 'Plume':
 			plumes.append(index)
 			break
 
