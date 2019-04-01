@@ -31,17 +31,26 @@ for index, c in enumerate(clusters):
 	cluster = clusters[c]
 	times = cluster['times']
 	bin_response[index][times] = 1
+
+window_resp.append([sum(bin_response[j][i-(window-1):i+1]) if i > (window-1) else sum(bin_response[j][:i+1]) for i in range(len(bin_response))])
 print('filled bin_response')
+
+rolling_resp = np.zeros(bin_response.shape)
+
+for c in range(len(bin_response)):
+	b = bin_response[j].cumsum()
+	b[window:] = b[window:] - b[:-window]
+	rolling_resp[j] = b
 # Make a rolling sum of the spikes
-rolling_resp = pandas.DataFrame(bin_response)
-print('change bin_response into df')
-rolling_resp = rolling_resp.T 
-print('flipped bin_response')
-rolling_resp.colums = [c for c in clusters]
-print('labelled columns')
-spike_resps = rolling_resp.rolling(window = window).sum()
-print('made a rolling window')
-spike_resp_array = np.array(spike_resps)
+# rolling_resp = pandas.DataFrame(bin_response)
+# print('change bin_response into df')
+# rolling_resp = rolling_resp.T 
+# print('flipped bin_response')
+# rolling_resp.columns = [c for c in clusters]
+# print('labelled columns')
+# spike_resps = rolling_resp.rolling(window = window).sum()
+# print('made a rolling window')
+# spike_resp_array = np.array(spike_resps)
 print('changed rolling window into array')
 trial_starts = np.fromfile(os.path.join(home_dir, 'trial_starts.npy'), dtype=np.int)
 print('loaded trial starts')
@@ -50,7 +59,7 @@ trial_window_size = 3*trial_length*fs
 
 trial_times = [j for i in trial_starts for j in  range(i-trial_length*fs, i+2*trial_length*fs)]
 print('made trial times')
-trial_resp_array = spike_resp_array.T[:, trial_times]
+trial_resp_array = rolling_resp[:, trial_times]
 print('made trial resp array')
 
 # Find the 
