@@ -32,25 +32,17 @@ for index, c in enumerate(clusters):
 	times = cluster['times']
 	bin_response[index][times] = 1
 
-#window_resp.append([sum(bin_response[j][i-(window-1):i+1]) if i > (window-1) else sum(bin_response[j][:i+1]) for i in range(len(bin_response))])
 print('filled bin_response')
 
 rolling_resp = np.zeros(bin_response.shape)
 
+# For each unit make a cumulative sum and take a window at each point to essentially take the sum of the previous window
+# way faster than before and doesn't need as much memory
 for c in range(len(bin_response)):
 	b = bin_response[c].cumsum()
 	b[window:] = b[window:] - b[:-window]
 	rolling_resp[c] = b
-# Make a rolling sum of the spikes
-# rolling_resp = pandas.DataFrame(bin_response)
-# print('change bin_response into df')
-# rolling_resp = rolling_resp.T 
-# print('flipped bin_response')
-# rolling_resp.columns = [c for c in clusters]
-# print('labelled columns')
-# spike_resps = rolling_resp.rolling(window = window).sum()
-# print('made a rolling window')
-# spike_resp_array = np.array(spike_resps)
+
 print('changed rolling window into array')
 trial_starts = np.fromfile(os.path.join(home_dir, 'trial_starts.npy'), dtype=np.int)
 print('loaded trial starts')
@@ -62,10 +54,10 @@ print('made trial times')
 trial_resp_array = rolling_resp[:, trial_times]
 print('made trial resp array')
 
-# Find the 
+
 tensor = np.zeros((len(clusters), trial_window_size, len(trial_starts)))
 for i in range(len(trial_starts)):
 	tensor[:, :, i] = trial_resp_array[:, i*trial_window_size:(i+1)*trial_window_size]
 print('assigned to tensor')
 pickle.dump(tensor, open(os.path.join(home_dir, 'good_unit_tensor.pkl'), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
-print('dumped tesnor')
+print('dumped tensor')

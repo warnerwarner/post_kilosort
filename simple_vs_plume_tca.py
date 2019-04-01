@@ -9,6 +9,8 @@ import os
 import psutil
 import sys
 
+
+
 rank = list(sys.argv)[1]
 rank = int(rank)
 job_id = list(sys.argv)[2]
@@ -47,5 +49,5 @@ output_dir = os.path.join(home_dir, job_id)
 if not os.path.isdir(output_dir):
 	os.mkdir(output_dir)
 
-pickle.dump(tcas, open(os.path.join(output_dir, 'tca_rank_%d'+job_id+'.pkl' % rank)))
+pickle.dump(tcas, open(os.path.join(output_dir, 'tca_rank_%d' % rank +job_id+'.pkl' % rank)))
 
