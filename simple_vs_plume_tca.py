@@ -17,7 +17,7 @@ job_id = list(sys.argv)[2]
 
 home_dir = '/home/camp/warnert/working/Recordings/190325/2019-03-25_16-57-37'
 
-tensor = pickle.Unpickler(open(os.path.join(home_dir, 'tiny_tensor.pkl'), 'rb')).load()
+tensor = pickle.Unpickler(open(os.path.join(home_dir, 'good_unit_tensor.pkl'), 'rb')).load()
 
 trialbank = pickle.Unpickler(open('/home/camp/warnert/working/Recordings/190325/simple_and_plumes_190325.trialbank', 'rb')).load()
 
@@ -49,5 +49,5 @@ output_dir = os.path.join(home_dir, job_id)
 if not os.path.isdir(output_dir):
 	os.mkdir(output_dir)
 
-pickle.dump(tcas, open(os.path.join(output_dir, 'tca_rank_%d' % rank +job_id+'.pkl'), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(tcas, open(os.path.join(output_dir, 'tca_rank_%d_' % rank +job_id+'.pkl'), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 
