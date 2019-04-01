@@ -3,6 +3,7 @@ import pickle
 import os
 import psutil
 import pandas
+import math
 import openephys as oe
 
 
@@ -37,7 +38,7 @@ step = 30
 window = 1# in s
 
 
-rolling_resp = np.zeros((bin_response.shape[0], int(bin_response.shape[1]/step)))
+rolling_resp = np.zeros((bin_response.shape[0], math.ceil(bin_response.shape[1]/step)))
 
 
 # For each unit make a cumulative sum and take a window at each point to essentially take the sum of the previous window
