@@ -17,8 +17,8 @@ job_id = list(sys.argv)[2]
 
 home_dir = '/home/camp/warnert/working/Recordings/190325/2019-03-25_16-57-37'
 
-tensor = pickle.Unpickler(open(os.path.join(home_dir, 'good_unit_tensor.pkl'), 'rb')).load()
-
+tensor = pickle.Unpickler(open(os.path.join(home_dir, 'ds_tensor.pkl'), 'rb')).load()
+tensor = tensor['tensor']
 trialbank = pickle.Unpickler(open('/home/camp/warnert/working/Recordings/190325/simple_and_plumes_190325.trialbank', 'rb')).load()
 
 plumes = []
