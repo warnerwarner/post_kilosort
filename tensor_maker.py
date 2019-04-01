@@ -53,7 +53,7 @@ trial_starts = np.fromfile(os.path.join(home_dir, 'trial_starts.npy'), dtype=np.
 ds_trial_starts = [int(i/30) for i in trial_starts]
 print('loaded trial starts')
 # Make the trial_window e.g the length of the trial response 
-trial_window_size = 3*trial_length*fs/step
+trial_window_size = int(3*trial_length*fs/step)
 
 trial_times = [j for i in ds_trial_starts for j in  range(int(i-trial_length*fs/step), int(i+2*trial_length*fs/step))]
 print('made trial times')
