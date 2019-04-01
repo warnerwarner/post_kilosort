@@ -32,7 +32,7 @@ for index, c in enumerate(clusters):
 	times = cluster['times']
 	bin_response[index][times] = 1
 
-window_resp.append([sum(bin_response[j][i-(window-1):i+1]) if i > (window-1) else sum(bin_response[j][:i+1]) for i in range(len(bin_response))])
+#window_resp.append([sum(bin_response[j][i-(window-1):i+1]) if i > (window-1) else sum(bin_response[j][:i+1]) for i in range(len(bin_response))])
 print('filled bin_response')
 
 rolling_resp = np.zeros(bin_response.shape)
