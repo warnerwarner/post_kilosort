@@ -4,7 +4,7 @@ import pickle
 import csv
 
 
-home_dir = "/home/camp/warnert/working/Recordings/190325/2019-03-25_16-57-37"
+home_dir = "/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49"
 
 # Read in the cluster classifications
 cluster_tsv = os.path.join(home_dir, 'cluster_group.tsv')
