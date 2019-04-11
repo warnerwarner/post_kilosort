@@ -2,9 +2,15 @@ import numpy as np
 import os
 import pickle
 import csv
+import psutil
+
+
+available_cpu_count = len(psutil.Process().cpu_affinity())
+os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
 
 home_dir = "/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49"
+date = home_dir.split('/')[6]
 
 # Read in the cluster classifications
 cluster_tsv = os.path.join(home_dir, 'cluster_group.tsv')
@@ -27,7 +33,7 @@ for i in tsv_read:
 all_clusters= np.concatenate((good_clusters, mua_clusters, noise_clusters))
 
 # Make a nice little header
-header = {'home_dir':home_dir, 'date':190325, 'good_clusters':good_clusters, 'mua_clusters':mua_clusters, 'noise_clusters':noise_clusters}
+header = {'home_dir':home_dir, 'date':date, 'good_clusters':good_clusters, 'mua_clusters':mua_clusters, 'noise_clusters':noise_clusters}
 
 # Load in all the post kilosort stuff
 times = np.load(os.path.join(home_dir, 'spike_times.npy'))
