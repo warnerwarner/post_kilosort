@@ -15,23 +15,16 @@ rank = list(sys.argv)[1]
 rank = int(rank)
 job_id = list(sys.argv)[2]
 
-home_dir = '/home/camp/warnert/working/Recordings/190325/2019-03-25_16-57-37'
+home_dir = '/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49'
 
 tensor = pickle.Unpickler(open(os.path.join(home_dir, 'ds_tensor.pkl'), 'rb')).load()
 tensor = tensor['tensor']
 trialbank = pickle.Unpickler(open('/home/camp/warnert/working/Recordings/190325/simple_and_plumes_190325.trialbank', 'rb')).load()
 
-plumes = []
-for index, i, in enumerate(trialbank):
-	for j in i[1]:
-		if j['type'] == 'Plume':
-			plumes.append(index)
-			break
+simps_plumes = pickle.Unpickler(open(os.path.join(home_dir, 'plume_and_simple_trials.pkl'), 'rb')).load()
+full_plumes = simps_plumes['plume']
+full_simps = simps_plumes['simps']
 
-simps = [i for i in range(len(trialbank)) if i not in plumes]
-full_simps = [j+i*len(trialbank) for i in range(14) for j in simps]
-full_simps = full_simps[:-1] # Cuase we lost the last trial
-full_plumes = [j+i*len(trialbank) for i in range(14) for j in plumes]
 
 simp_tensor = tensor[:, :, full_simps]
 plume_tensor = tensor[:, :, full_plumes]
