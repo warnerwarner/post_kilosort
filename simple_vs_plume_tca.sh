@@ -1,7 +1,7 @@
 #!/bin/bash
 # 
 #SBATCH --job-name=spike_plotter
-#SBATCH --array=1-20
+#SBATCH --array=1-100
 #SBATCH --output=/home/camp/warnert/outputs/output_%a.txt	## 
 #SBATCH --error=/home/camp/warnert/outputs/error_%a.txt
 #SBATCH --ntasks=1
