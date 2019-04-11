@@ -23,7 +23,7 @@ trialbank = pickle.Unpickler(open('/home/camp/warnert/working/Recordings/190325/
 
 simps_plumes = pickle.Unpickler(open(os.path.join(home_dir, 'plume_and_simple_trials.pkl'), 'rb')).load()
 full_plumes = simps_plumes['plume']
-full_simps = simps_plumes['simps']
+full_simps = simps_plumes['simple']
 
 
 simp_tensor = tensor[:, :, full_simps]
