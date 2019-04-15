@@ -146,7 +146,7 @@ if __name__ == '__main__':
 	good_clusters = clusterbank['good_units']
 
 	# Taking the chosen unit from the index of the good clusters
-	chosen_unit_index = list(sys.argv)[0]
+	chosen_unit_index = list(sys.argv)[1]
 	chosen_unit_index = int(chosen_unit_index)
 	cluster_num = good_clusters.values[chosen_unit_index]
 
