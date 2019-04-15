@@ -115,7 +115,7 @@ def together_plot(data, spike_times, trial_starts, cluster_num, channel_num, out
 		trial_spike_times.append((spike_times[(spike_times > i - trial_length*fs) & (spike_times < i + 2*trial_length*fs)] - float(i))/fs)
 
 	ax[0].plot(x, cluster_spikes.T, color='gray')
-	ax[0].plot(np.mean(cluster_spikes, axis=0))
+	ax[0].plot(x, np.mean(cluster_spikes, axis=0))
 	ax[0].set_xlabel('Time (ms)')
 	ax[0].set_ylabel('Voltage ($\mu$V)')
 	ax[0].set_title('Cluster %d, channel %d' % (cluster_num, channel_num))
