@@ -73,7 +73,8 @@ def raster_plot(trial_starts, spike_times, output_loc, *, trial_length=5, fs = 3
 	plt.axvline(trial_length, color='r')
 	plt.savefig(output_loc, dpi=300)
 
-def together_plot(data, spike_times, trial_starts, cluster_num, channel_num, output_loc, *, pre_spike_length= 30, post_spike_length=60, trial_length=5, fs=30000):
+def together_plot(data, spike_times, trial_starts, cluster_num, channel_num, output_loc, *, pre_spike_length= 30, post_spike_length=60, trial_length=5, fs=30000,
+	plot_limits='avg'):
 	'''
 	Plots a double figure with the avg spike plot and the raster plot
 
@@ -100,8 +101,10 @@ def together_plot(data, spike_times, trial_starts, cluster_num, channel_num, out
 		Length of the trials during the recording in seconds (default=5)
 	fs:
 		Sampling frequency of the recording (default=30kHz)
+	plot_limits:
+		Set the x and y limits of the plots, can be 'avg' which centres on the average of the spike, or None which imposes none on
 	'''
-	fig, ax = plt.subplots(1, 2)
+	fig, ax = plt.subplots(1, 2, figsize=(10, 4))
 	cluster_spikes = []
 	for i in spike_times:
 		spike = data[int(i-pre_spike_length):int(i+post_spike_length)]
@@ -114,17 +117,20 @@ def together_plot(data, spike_times, trial_starts, cluster_num, channel_num, out
 	for i in trial_starts:
 		trial_spike_times.append((spike_times[(spike_times > i - trial_length*fs) & (spike_times < i + 2*trial_length*fs)] - float(i))/fs)
 
+	avg_spike = np.mean(cluster_spikes, axis=0)
 	ax[0].plot(x, cluster_spikes.T, color='gray')
-	ax[0].plot(x, np.mean(cluster_spikes, axis=0))
+	ax[0].plot(x,avg_spike)
 	ax[0].set_xlabel('Time (ms)')
 	ax[0].set_ylabel('Voltage ($\mu$V)')
 	ax[0].set_title('Cluster %d, channel %d' % (cluster_num, channel_num))
+	ax[0].set_ylim([min(avg_spike)*1.1, -min(avg_spike)*0.3])
 
 	ax[1].eventplot(trial_spike_times, colors='k')
 	ax[1].set_ylabel('Trial number')
 	ax[1].set_xlabel('Time (s)')
 	ax[1].axvline(0, color='r')
 	ax[1].axvline(5, color='r')
+	#plt.tight_layout()
 	plt.savefig(output_loc, dpi=300)
 
 
@@ -136,7 +142,7 @@ if __name__ == '__main__':
 	os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
 	# Location of data
-	home_dir = '/home/camp/warnert/working/Recordings/190222/2019-02-22_14-15-45'
+	home_dir = '/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49'
 
 	# Location of phy channel map
 	chan_map = np.load(os.path.join(home_dir, 'channel_map.npy'))
@@ -144,6 +150,8 @@ if __name__ == '__main__':
 	# Clusterbank and good clusters
 	clusterbank = pickle.Unpickler(open(os.path.join(home_dir, 'clusterbank.pkl'), 'rb')).load()
 	good_clusters = clusterbank['good_units']
+
+	print(home_dir)
 
 	for cluster_num in good_clusters:
 
