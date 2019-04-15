@@ -136,7 +136,7 @@ if __name__ == '__main__':
 	os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
 	# Location of data
-	home_dir = '/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49'
+	home_dir = '/home/camp/warnert/working/Recordings/190325/2019-03-25_16-57-37'
 
 	# Location of phy channel map
 	chan_map = np.load(os.path.join(home_dir, 'channel_map.npy'))
@@ -145,31 +145,28 @@ if __name__ == '__main__':
 	clusterbank = pickle.Unpickler(open(os.path.join(home_dir, 'clusterbank.pkl'), 'rb')).load()
 	good_clusters = clusterbank['good_units']
 
-	# Taking the chosen unit from the index of the good clusters
-	chosen_unit_index = list(sys.argv)[1]
-	chosen_unit_index = int(chosen_unit_index)
-	cluster_num = list(good_clusters.keys())[chosen_unit_index]
+	for cluster_num in good_clusters:
 
-	# Open the single cluster info
-	cluster= good_clusters[cluster_num]
-	spike_times = cluster['times']
+		# Open the single cluster info
+		cluster= good_clusters[cluster_num]
+		spike_times = cluster['times']
 
-	# Load the trial starts
-	trial_starts = np.fromfile(os.path.join(home_dir, 'trial_starts.npy'), dtype=np.int)
+		# Load the trial starts
+		trial_starts = np.fromfile(os.path.join(home_dir, 'trial_starts.npy'), dtype=np.int)
 
-	full_trials = trial_starts[1:113] # Missed first one and mouse died during final iteration kept the first of the final iteration to keep repeats equal
+		full_trials = trial_starts[1:113] # Missed first one and mouse died during final iteration kept the first of the final iteration to keep repeats equal
 
-	# Map the channel number using the channel map
-	channel_num = cluster['max_chan']
-	channel_num = int(chan_map[channel_num])
+		# Map the channel number using the channel map
+		channel_num = cluster['max_chan']
+		channel_num = int(chan_map[channel_num])
 
-	#Load all the data
-	data = oe.loadContinuous2(os.path.join(home_dir, '100_CH%d.continuous' % (channel_num + 1)))['data']
+		#Load all the data
+		data = oe.loadContinuous2(os.path.join(home_dir, '100_CH%d.continuous' % (channel_num + 1)))['data']
 
-	#Make the output if it doesn't exit
-	output_dir = os.path.join(home_dir, 'unit_plots')
-	if not os.path.isdir(output_dir):
-		os.mkdir(output_dir)
+		#Make the output if it doesn't exit
+		output_dir = os.path.join(home_dir, 'unit_plots')
+		if not os.path.isdir(output_dir):
+			os.mkdir(output_dir)
 
-	#Do all the stuff
-	together_plot(data, spike_times, full_trials, cluster_num, channel_num+1, os.path.join(output_dir, '%d_cluster.png' % cluster_num))
+		#Do all the stuff
+		together_plot(data, spike_times, full_trials, cluster_num, channel_num+1, os.path.join(output_dir, '%d_cluster.png' % cluster_num))
