@@ -136,7 +136,7 @@ if __name__ == '__main__':
 	os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
 	# Location of data
-	home_dir = '/home/camp/warnert/working/Recordings/190325/2019-03-25_16-57-37'
+	home_dir = '/home/camp/warnert/working/Recordings/190222/2019-02-22_14-15-45'
 
 	# Location of phy channel map
 	chan_map = np.load(os.path.join(home_dir, 'channel_map.npy'))
@@ -170,3 +170,4 @@ if __name__ == '__main__':
 
 		#Do all the stuff
 		together_plot(data, spike_times, full_trials, cluster_num, channel_num+1, os.path.join(output_dir, '%d_cluster.png' % cluster_num))
+		print('Done', cluster_num)
