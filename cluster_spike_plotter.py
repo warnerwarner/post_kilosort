@@ -148,7 +148,7 @@ if __name__ == '__main__':
 	# Taking the chosen unit from the index of the good clusters
 	chosen_unit_index = list(sys.argv)[1]
 	chosen_unit_index = int(chosen_unit_index)
-	cluster_num = good_clusters.values[chosen_unit_index]
+	cluster_num = list(good_clusters.keys())[chosen_unit_index]
 
 	# Open the single cluster info
 	cluster= good_clusters[cluster_num]
