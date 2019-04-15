@@ -164,7 +164,7 @@ if __name__ == '__main__':
 	channel_num = int(chan_map[channel_num])
 
 	#Load all the data
-	data = oe.loadContinuous2(os.path.join(home_dir, '100_CH%d.continuous' % channel_num + 1))['data']
+	data = oe.loadContinuous2(os.path.join(home_dir, '100_CH%d.continuous' % (channel_num + 1)))['data']
 
 	#Make the output if it doesn't exit
 	output_dir = os.path.join(home_dir, 'unit_plots')
