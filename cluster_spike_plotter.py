@@ -10,27 +10,15 @@ import matplotlib.pyplot as plt
 import pickle
 import openephys as oe
 
-def spike_plot(data, spike_times, cluster_num, channel_num, output_loc, *, pre_spike_length=30, post_spike_length=60):
+def find_cluster_spikes(data, spike_times, *, pre_spike_length = 30, post_spike_length = 60):
 	'''
-	Plots all spikes from a channel associated with a cluster and then plots the average spike on top
+	Finds all the spikes for a cluster and returns them as a Nxt array where N is number of spikes and t is the number of time points
 
 	Arguments:
-	data: 
-		The raw data, single channel array - should be at 30kHz for correct x axis
+	data:
+		The recorded channel
 	spike_times:
-		The times at which the unit's spikes occur
-	cluster_num:
-		The number of the cluster, for the title of the plot
-	channel_num:
-		The data channel passed to the function, for the title of the plot
-	output_loc:
-		The output location for the plot
-
-	Optional arguments:
-	pre_spike_length:
-		The length of the window (in samples) before the spike to be plotted, default=30 (1ms)
-	post_spike_length:
-		The length of the window (in samples) after the spike to be plotted default=60 (2ms)
+		Times at which the cluster is believed to have spiked
 	'''
 	cluster_spikes = []
 	for i in times:
@@ -38,34 +26,61 @@ def spike_plot(data, spike_times, cluster_num, channel_num, output_loc, *, pre_s
 		cluster_spikes.append(spike - np.median(spike))
 	x = np.arange(0, int((pre_spike_length+post_spike_length)/30), 1/30)
 	cluster_spikes = np.array(cluster_spikes)
-	plt.plot(cluster_spikes.T, color='gray')
-	plt.plot(np.mean(cluster_spikes, axis=0))
+
+	return x, cluster_spikes
+
+def find_trial_spike_times(trial_starts, spike_times, *, trial_length=5, fs=30000):
+	'''
+	Finds spikes that are present in, or in a window around a trial and returns then as an k x t array
+
+	Arguments:
+	trial_starts:
+		Times the trials start
+	spike_times:
+		Times that spikes are found
+	'''
+	trial_spike_times = []
+	for i in trial_starts:
+		init = i - trial_length*fs
+		end = i + 2*trial_length*fs 
+		reset_spike_times = cluster_spikes[(cluster_spikes > init)& (cluster_spikes < end)] - float(i)
+		trial_spike_times.append(reset_spike_times/fs)
+	return trial_spike_times
+
+
+def spike_plot(x, cluster_spikes, cluster_num, channel_num, output_loc):
+	'''
+	Plots all spikes from a channel associated with a cluster and then plots the average spike on top
+
+	Arguments:
+	x:
+		The x axis, should be time
+	cluster_spikes:
+		The snipped spikes from a cluster
+	cluster_num:
+		The number of the cluster, for the title of the plot
+	channel_num:
+		The data channel passed to the function, for the title of the plot
+	output_loc:
+		The output location for the plot
+	'''
+	plt.plot(x, cluster_spikes.T, color='gray')
+	plt.plot(x, np.mean(cluster_spikes, axis=0))
 	plt.xlabel('Time (ms)')
 	plt.ylabel('Voltage ($\mu$V)')
 	plt.title('Cluster %d channel %d' % (cluster_num, channel_num))
 	plt.savefig(output_loc, dpi=300)
 
-def raster_plot(trial_starts, spike_times, output_loc, *, trial_length=5, fs = 30000):
+def raster_plot(trial_spike_times, output_loc):
 	'''
 	Plots a raster plot for a cluster
 
 	Arguments:
-	trial_starts:
-		The times at which trials begin
-	spike_times:
-		The times at which the cluster spikes
+	trial_spike_times:
+		The times at which the cluster spikes during trials, has been rescaled for lower sampling rate
 	output_loc:
 		The location for the plot to be saved
-
-	Optional arguments:
-	trial_length: 
-		The length of the trails that are being plotted in seconds (default=5)
-	fs:
-		Sampling frequency of the recording (default=30KHz)
 	'''
-	trial_spike_times = []
-	for i in trial_starts:
-		trial_spike_times.append((cluster_spikes[(cluster_spikes > i-trial_length*fs)& (cluster_spikes < i + 2*trial_length*fs)] - float(i))/fs)
 	plt.eventplot(trial_spike_times)
 	plt.ylabel('Trial')
 	plt.xlabel('Time (s)')
@@ -73,18 +88,17 @@ def raster_plot(trial_starts, spike_times, output_loc, *, trial_length=5, fs = 3
 	plt.axvline(trial_length, color='r')
 	plt.savefig(output_loc, dpi=300)
 
-def together_plot(data, spike_times, trial_starts, cluster_num, channel_num, output_loc, *, pre_spike_length= 30, post_spike_length=60, trial_length=5, fs=30000,
-	plot_limits='avg'):
+def together_plot(x, cluster_spikes, trial_spike_times, cluster_num, channel_num, output_loc, *, plot_limits=True):
 	'''
 	Plots a double figure with the avg spike plot and the raster plot
 
 	Arguments:
-	data:
-		The data from the channel for the spikes to be plotted
-	spike_times:
-		Times at which the cluster spiked
-	trial_starts:
-		Times at which the trials started
+	x:
+		Time series for the spike plot
+	cluster_spikes:
+		Array of arrays of channel recordings from around the spikes detected and assigned to this cluster
+	trial_spike_times:
+		Times the unit spiked during a trial
 	cluster_num:
 		The number of the cluster (for use in the plot title)
 	channel_num:
@@ -93,47 +107,31 @@ def together_plot(data, spike_times, trial_starts, cluster_num, channel_num, out
 		Location to save the plot
 
 	Optional arguments:
-	pre_spike_length:
-		The length of plot to include before the spike event in samples (default=30)
-	post_spike_length:
-		The length of plot to include after the spike event in samples (default=60)
-	trial_length:
-		Length of the trials during the recording in seconds (default=5)
-	fs:
-		Sampling frequency of the recording (default=30kHz)
 	plot_limits:
-		Set the x and y limits of the plots, can be 'avg' which centres on the average of the spike, or None which imposes none on
+		Set the y limits of the plots, on True weights it on the maximum negative value of the spike
 	'''
 	fig, ax = plt.subplots(1, 2, figsize=(10, 4))
-	cluster_spikes = []
-	for i in spike_times:
-		spike = data[int(i-pre_spike_length):int(i+post_spike_length)]
-		cluster_spikes.append(spike - np.median(spike))
-	x = np.arange(0, int((pre_spike_length+post_spike_length)/30), 1/30)
-	cluster_spikes = np.array(cluster_spikes)
-
-
-	trial_spike_times= []
-	for i in trial_starts:
-		trial_spike_times.append((spike_times[(spike_times > i - trial_length*fs) & (spike_times < i + 2*trial_length*fs)] - float(i))/fs)
 
 	avg_spike = np.mean(cluster_spikes, axis=0)
 	ax[0].plot(x, cluster_spikes.T, color='gray')
 	ax[0].plot(x,avg_spike)
 	ax[0].set_xlabel('Time (ms)')
 	ax[0].set_ylabel('Voltage ($\mu$V)')
-	ax[0].set_title('Cluster %d, channel %d' % (cluster_num, channel_num))
-	ax[0].set_ylim([min(avg_spike)*1.1, -min(avg_spike)*0.3])
+	if plot_limits:
+		ax[0].set_ylim([min(avg_spike)*1.1, -min(avg_spike)*0.3])
 
 	ax[1].eventplot(trial_spike_times, colors='k')
 	ax[1].set_ylabel('Trial number')
 	ax[1].set_xlabel('Time (s)')
 	ax[1].axvline(0, color='r')
 	ax[1].axvline(5, color='r')
-	#plt.tight_layout()
+	plt.title('Cluster %d, channel %d' % (cluster_num, channel_num))
 	plt.savefig(output_loc, dpi=300)
 
-
+def cluster_comparision(clusters, cluster_spikes):
+	'''
+	Plots and returns the 
+	'''
 
 
 if __name__ == '__main__':
@@ -177,5 +175,5 @@ if __name__ == '__main__':
 			os.mkdir(output_dir)
 
 		#Do all the stuff
-		together_plot(data, spike_times, full_trials, cluster_num, channel_num+1, os.path.join(output_dir, '%d_cluster.png' % cluster_num))
+		cluster_spikes = together_plot(data, spike_times, full_trials, cluster_num, channel_num+1, os.path.join(output_dir, '%d_cluster.png' % cluster_num))
 		print('Done', cluster_num)
