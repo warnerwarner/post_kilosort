@@ -9,7 +9,7 @@ available_cpu_count = len(psutil.Process().cpu_affinity())
 os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
 
-home_dir = "/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49"
+home_dir = "/home/camp/warnert/working/Recordings/190211/2019-02-11_16-35-46"
 date = home_dir.split('/')[6]
 
 # Read in the cluster classifications
