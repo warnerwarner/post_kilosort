@@ -128,10 +128,18 @@ def together_plot(x, cluster_spikes, trial_spike_times, cluster_num, channel_num
 	plt.title('Cluster %d, channel %d' % (cluster_num, channel_num))
 	plt.savefig(output_loc, dpi=300)
 
-def cluster_comparision(clusters, cluster_spikes):
+def cluster_comparision(clusters, all_cluster_spikes):
 	'''
-	Plots and returns the 
+	Compares all the clusters in a recording
 	'''
+	cluster_comparision = {}
+	spike_number = []
+
+	for cluster_num in clusters:
+		cluster = clusters[cluster_num]	
+		number_of_spikes = len(cluster['times'])
+		cluster_spikes = all_cluster_spikes[cluster_num]
+		amps = [np.]
 
 
 if __name__ == '__main__':
