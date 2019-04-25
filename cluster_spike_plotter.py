@@ -21,7 +21,7 @@ def find_cluster_spikes(data, spike_times, *, pre_spike_length = 30, post_spike_
 		Times at which the cluster is believed to have spiked
 	'''
 	cluster_spikes = []
-	for i in times:
+	for i in spike_times:
 		spike = data[int(i-pre_spike_length):int(i+post_spike_length)]
 		cluster_spikes.append(spike - np.median(spike))
 	x = np.arange(0, int((pre_spike_length+post_spike_length)/30), 1/30)
