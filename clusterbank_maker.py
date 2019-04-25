@@ -57,12 +57,14 @@ def make_clusterbank(home_dir, *, dump=True):
 			chan_sums = [abs(sum(j)) for j in clus_temp.T]
 			template_maxes[max(chan_sums)] = np.argmax(chan_sums)
 		chan_max = template_maxes[max(template_maxes.keys())]
+		file_max = int(chan_map[channel_max]) + 1
+
 		if cluster in good_clusters:
-			good_units[cluster] = {'max_chan':chan_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			good_units[cluster] = {'max_chan':chan_max, 'file_max':file_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in mua_clusters:
-			mua_units[cluster] = {'max_chan':chan_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			mua_units[cluster] = {'max_chan':chan_max, 'file_max':file_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in noise_clusters:
-			noise_units[cluster] = {'max_chan':chan_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			noise_units[cluster] = {'max_chan':chan_max,'file_max':file_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 
 
 	# Turn all the unit dicts into one big dict
