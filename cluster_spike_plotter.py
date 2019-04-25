@@ -139,7 +139,7 @@ def cluster_comparision(clusters, all_cluster_spikes):
 		cluster = clusters[cluster_num]	
 		number_of_spikes = len(cluster['times'])
 		cluster_spikes = all_cluster_spikes[cluster_num]
-		amps = [np.]
+		#amps = [np.]
 
 
 if __name__ == '__main__':
