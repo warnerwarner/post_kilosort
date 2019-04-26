@@ -92,7 +92,7 @@ def make_clusterbank(home_dir, *, dump=True, kilosort2=False):
 
 		if kilosort2:
 			amp = cluster_amp[cluster]
-			contamination = cluster_contam[cluster]
+			contam = cluster_contam[cluster]
 			ks_label = KSlabels[cluster]
 		else:
 			amp = None
