@@ -67,8 +67,7 @@ def make_clusterbank(home_dir, *, dump=True, kilosort2=False):
 	chan_positions = np.load(os.path.join(home_dir, 'channel_positions.npy'))
 	chan_map = np.load(os.path.join(home_dir, 'channel_map.npy'))
 	chan_dict = dict(zip(chan_map.T[0]+1, chan_positions))
-	cluster_contam = csv.read(open(os.path.join(home_dir, 'cluster_ContamPct.tsv')), delimiter='\t')
-	cluster_amp = csv.read(open(os.path.join(home_dir, 'cluster_Amplitude.tsv')), delimiter='\t')
+
 
 
 
