@@ -33,7 +33,7 @@ def make_clusterbank(home_dir, *, dump=True, kilosort2=False):
 		KSlabels = {}
 		cluster_contam = {}
 		cluster_amp = {}
-		for i, j, k in zip(KSlabels_tsv, cluster_contam_tsv, cluster_amp_tsv):
+		for i, j, k in zip(KSlabels_tsv[1:], cluster_contam_tsv[1:], cluster_amp_tsv[1:]):
 			KSlabels[int(i[0])] = i[1]
 			cluster_contam[int(j[0])] = float(j[1])
 			cluster_amp[int(k[0])] = float(k[1])
