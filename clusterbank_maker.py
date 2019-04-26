@@ -4,12 +4,40 @@ import pickle
 import csv
 import psutil
 
-def make_clusterbank(home_dir, *, dump=True):
+def make_clusterbank(home_dir, *, dump=True, kilosort2=False):
+	'''
+	Makes clusterbanks with info about the clusters isolated from kilosort
+
+	Arguments:
+	home_dir:
+		The directory that the kilosort outputs are stored
+
+	Optional arguments:
+	dump:
+		Dump the clusterbank in a location
+	kilosort2:
+		If kilosort 2 has been run on the data
+	'''
 	date = home_dir.split('/')[6]
 
 	# Read in the cluster classifications
 	cluster_tsv = os.path.join(home_dir, 'cluster_group.tsv')
 	tsv_read = csv.reader(open(cluster_tsv, 'r'), delimiter='\t')
+
+
+	if kilosort2:
+		KSlabels_tsv = list(csv.reader(open(os.path.join(home_dir, 'cluster_KSLabel.tsv'), 'r'), delimiter='\t'))
+		cluster_contam_tsv = list(csv.reader(open(os.path.join(home_dir, 'cluster_ContamPct.tsv'), 'r'), delimiter='\t'))
+		cluster_amp_tsv = list(csv.reader(open(os.path.join(home_dir, 'cluster_Amplitude.tsv'), 'r'), delimiter='\t'))
+		
+		KSlabels = {}
+		cluster_contam = {}
+		cluster_amp = {}
+		for i, j, k in zip(KSlabels_tsv, cluster_contam_tsv, cluster_amp_tsv):
+			KSlabels[int(i[0])] = float(i[1])
+			cluster_contam[int(j[0])] = float(j[1])
+			cluster_amp[int(k[0])] = float(k[1])
+
 
 	# Hold the good, bad and ugly clusters
 	good_clusters = []
@@ -27,8 +55,8 @@ def make_clusterbank(home_dir, *, dump=True):
 	# Concatenate all the clusters together for the loop
 	all_clusters= np.concatenate((good_clusters, mua_clusters, noise_clusters))
 
-	# Make a nice little header
-	header = {'home_dir':home_dir, 'date':date, 'good_clusters':good_clusters, 'mua_clusters':mua_clusters, 'noise_clusters':noise_clusters}
+	# Make a nice little header	
+	header = {'home_dir':home_dir, 'date':date, 'kilosort2':kilosort2, 'good_clusters':good_clusters, 'mua_clusters':mua_clusters, 'noise_clusters':noise_clusters}
 
 	# Load in all the post kilosort stuff
 	times = np.load(os.path.join(home_dir, 'spike_times.npy'))
@@ -39,6 +67,10 @@ def make_clusterbank(home_dir, *, dump=True):
 	chan_positions = np.load(os.path.join(home_dir, 'channel_positions.npy'))
 	chan_map = np.load(os.path.join(home_dir, 'channel_map.npy'))
 	chan_dict = dict(zip(chan_map.T[0]+1, chan_positions))
+	cluster_contam = csv.read(open(os.path.join(home_dir, 'cluster_ContamPct.tsv')), delimiter='\t')
+	cluster_amp = csv.read(open(os.path.join(home_dir, 'cluster_Amplitude.tsv')), delimiter='\t')
+
+
 
 	# Dictionary to hold the actual information for the clusters
 	good_units = {}
@@ -59,12 +91,21 @@ def make_clusterbank(home_dir, *, dump=True):
 		chan_max = template_maxes[max(template_maxes.keys())]
 		file_max = int(chan_map[chan_max]) + 1
 
+		if kilosort2:
+			amp = cluster_amp[cluster]
+			contamination = cluster_contam[cluster]
+			ks_label = KSlabels[cluster]
+		else:
+			amp = None
+			contamination = None
+			ks_label = None
+
 		if cluster in good_clusters:
-			good_units[cluster] = {'max_chan':chan_max, 'file_max':file_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			good_units[cluster] = {'contamination':contam,'amplitude':amp,'max_chan':chan_max, 'file_max':file_max, 'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in mua_clusters:
-			mua_units[cluster] = {'max_chan':chan_max, 'file_max':file_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			mua_units[cluster] = {'contamination':contam,'amplitude':amp,'max_chan':chan_max, 'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in noise_clusters:
-			noise_units[cluster] = {'max_chan':chan_max,'file_max':file_max, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			noise_units[cluster] = {'contamination':contam,'amplitude':amp,'max_chan':chan_max,'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 
 
 	# Turn all the unit dicts into one big dict
