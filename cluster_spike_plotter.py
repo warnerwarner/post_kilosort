@@ -43,7 +43,7 @@ def find_trial_spike_times(trial_starts, spike_times, *, trial_length=5, fs=3000
 	for i in trial_starts:
 		init = i - trial_length*fs
 		end = i + 2*trial_length*fs 
-		reset_spike_times = cluster_spikes[(cluster_spikes > init)& (cluster_spikes < end)] - float(i)
+		reset_spike_times = spike_times[(spike_times > init)& (spike_times < end)] - float(i)
 		trial_spike_times.append(reset_spike_times/fs)
 	return trial_spike_times
 
