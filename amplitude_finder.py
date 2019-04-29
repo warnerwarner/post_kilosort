@@ -4,6 +4,11 @@ import os
 import sys 
 import numpy as np
 import pickle
+import time  
+
+# def find_amps_dat():
+
+# def find_amps_continuous():
 
 available_cpu_count = len(psutil.Process().cpu_affinity())
 os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
@@ -22,8 +27,8 @@ else:
 cluster = clusterbank['good_units'][cluster_num]
 
 spike_times = cluster['times']
-dat_loc = os.path.join(home_dir, '100_CHs.dat')
-amps, max_cluster_chan = find_amplitudes(dat_loc, 64, spike_times)
+#dat_loc = os.path.join(home_dir, '100_CHs.dat')
+amps, max_cluster_chan = find_amplitudes(home_dir, 64, spike_times)
 
 amp_and_chan = {'amps':amps, 'max_cluster_chan':max_cluster_chan}
 
