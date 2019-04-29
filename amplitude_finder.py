@@ -12,7 +12,7 @@ os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 cluster_num = list(sys.argv)[1]
 cluster_num = int(cluster_num)
 
-home_dir = ''
+home_dir = '/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49'
 clusterbank_loc = os.path.join(home_dir, 'clusterbank_basic.pkl')
 if os.path.isfile(clusterbank_loc):
 	clusterbank = pickle.Unpickler(open(clusterbank_loc, 'rb')).load()
