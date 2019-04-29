@@ -170,7 +170,7 @@ def make_clusterbank_full_amps(home_dir, num_of_chans, *, amp_loc = 'cluster_amp
 	print(home_dir)
 	for unit_type in clusterbank_basic:
 		print(home_dir)
-		if 'unit' in unit_type:
+		if 'good_unit' in unit_type:
 			print(home_dir)
 			print('Doing', unit_type, 'now')
 			for cluster_num in clusterbank_basic[unit_type]:
