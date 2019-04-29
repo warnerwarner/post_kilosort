@@ -30,4 +30,4 @@ amp_and_chan = {'amps':amps, 'max_cluster_chan':max_cluster_chan}
 output_dir = os.path.join(home_dir, 'cluster_amplitudes')
 if not os.path.isdir(output_dir):
 	os.mkdir(output_dir)
-pickle.dump(amp_and_chan, open(output_dir, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(amp_and_chan, open(os.path.join(output_dir, 'cluster_%d.pkl' % cluster_num), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
