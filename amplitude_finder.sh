@@ -10,4 +10,4 @@
 #SBATCH --partition=compute
 #
 
-python .py $SLURM_ARRAY_TASK_ID
+python amplitude_finder.py $SLURM_ARRAY_TASK_ID
