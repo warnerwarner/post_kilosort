@@ -2,6 +2,7 @@ import numpy as np
 import os
 import pickle
 import csv
+from tqdm import tqdm
 import psutil
 from cluster_spike_plotter import *
 
@@ -120,7 +121,7 @@ def find_amplitudes(dat_loc, num_of_chans,  spike_times, *, bitvolts=0.195, orde
 	time_length = int(len(dat_file)/num_of_chans)
 	dat_file = dat_file.reshape((num_of_chans, time_length), order=order)
 	cluster_spikes = []
-	for i in range(num_of_chans):
+	for i in tqdm(range(num_of_chans)):
 		cluster_spikes.append(find_cluster_spikes(dat_file[i], spike_times)[1])
 	max_cluster_chan = find_max_chan(cluster_spikes)
 	amps = [min(i)*bitvolts for i in cluster_spikes[max_cluster_chan]]
