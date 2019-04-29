@@ -122,7 +122,7 @@ def find_amplitudes(data_loc, num_of_chans,  spike_times, *, dat=False, bitvolts
 		time_length = int(len(dat_file)/num_of_chans)
 		datas = dat_file.reshape((num_of_chans, time_length), order=order)
 	else:
-		datas = [oe.loadContinuous2(os.path.join(data_loc, '100_CH%d.continuous' % i)) for i in range(1, num_of_chans+1)]
+		datas = [oe.loadContinuous2(os.path.join(data_loc, '100_CH%d.continuous' % i))['data'] for i in range(1, num_of_chans+1)]
 	cluster_spikes = []
 	for i in tqdm(range(num_of_chans)):
 		cluster_spikes.append(find_cluster_spikes(datas[i], spike_times)[1])
