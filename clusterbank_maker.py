@@ -167,10 +167,14 @@ def make_clusterbank_full(home_dir, num_of_chans, *, bitvolts=0.195, order='F', 
 
 def make_clusterbank_full_amps(home_dir, num_of_chans, *, amp_loc = 'cluster_amplitudes', kilosort2=False, dump=True):
 	clusterbank_basic = make_clusterbank_basic(home_dir, dump=False, kilosort2=kilosort2)
+	print(home_dir)
 	for unit_type in clusterbank_basic:
+		print(home_dir)
 		if 'unit' in unit_type:
+			print(home_dir)
 			print('Doing', unit_type, 'now')
 			for cluster_num in clusterbank_basic[unit_type]:
+				print(home_dir)
 				print('Doing cluster', cluster_num)
 				cluster = clusterbank_basic[unit_type][cluster_num]
 				spike_times = cluster['times']
