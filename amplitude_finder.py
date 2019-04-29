@@ -14,9 +14,11 @@ available_cpu_count = len(psutil.Process().cpu_affinity())
 os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
 
+output_dir = os.path.join(home_dir, 'cluster_amplitudes')
 cluster_num = list(sys.argv)[1]
 cluster_num = int(cluster_num)
-
+if os.path.isfile(os.path.join(output_dir, 'cluster_%d.pkl')):
+	sys.exit()
 home_dir = '/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49'
 clusterbank_loc = os.path.join(home_dir, 'clusterbank_basic.pkl')
 if os.path.isfile(clusterbank_loc):
@@ -32,7 +34,6 @@ amps, max_cluster_chan = find_amplitudes(home_dir, 64, spike_times)
 
 amp_and_chan = {'amps':amps, 'max_cluster_chan':max_cluster_chan}
 
-output_dir = os.path.join(home_dir, 'cluster_amplitudes')
 if not os.path.isdir(output_dir):
 	os.mkdir(output_dir)
 pickle.dump(amp_and_chan, open(os.path.join(output_dir, 'cluster_%d.pkl' % cluster_num), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
