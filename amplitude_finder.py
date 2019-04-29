@@ -17,7 +17,7 @@ clusterbank_loc = os.path.join(home_dir, 'clusterbank_basic.pkl')
 if os.path.isfile(clusterbank_loc):
 	clusterbank = pickle.Unpickler(open(clusterbank_loc, 'rb')).load()
 else:
-	clusterbank = make_clusterbank_basic(home_dir)
+	clusterbank = make_clusterbank_basic(home_dir, kilosort2=True)
 
 cluster = clusterbank['good_units'][cluster_num]
 

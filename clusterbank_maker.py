@@ -98,7 +98,7 @@ def make_clusterbank_basic(home_dir, *, dump=True, kilosort2=False):
 			ks_label = KSlabels[cluster]
 		else:
 			amp = None
-			contamination = None
+			contam = None
 			ks_label = None
 
 		if cluster in good_clusters:
