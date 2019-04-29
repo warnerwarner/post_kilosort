@@ -174,6 +174,9 @@ def make_clusterbank_full_amps(home_dir, num_of_chans, *, amp_loc = 'cluster_amp
 				print('Doing cluster', cluster_num)
 				cluster = clusterbank_basic[unit_type][cluster_num]
 				spike_times = cluster['times']
+				print(home_dir)
+				print(amp_loc)
+				print('cluster_%d.pkl' % int(cluster_num))
 				amps_dict_loc = os.path.join(home_dir, amp_loc, 'cluster_%d.pkl' % int(cluster_num))
 				amps_dict = pickle.Unpickler(open(amps_dict_loc, 'rb')).load()
 				cluster['amps'] = amps_dict['amps']
