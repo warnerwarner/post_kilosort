@@ -142,7 +142,7 @@ def make_clusterbank_full(home_dir, num_of_chans, *, bitvolts=0.195, order='F', 
 	clusterbank_basic = make_clusterbank_basic(home_dir, dump=False, kilosort2=kilosort2)
 	print('Done making basic clusterbank')
 	for unit_type in clusterbank_basic:
-		if unit_type != 'header':
+		if 'unit' in unit_type: 
 			print('Doing', unit_type, 'units now')
 			for cluster_num in clusterbank_basic[unit_type]:
 				print('Doing cluster', cluster_num)
