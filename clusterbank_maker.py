@@ -3,8 +3,16 @@ import os
 import pickle
 import csv
 import psutil
+from cluster_spike_plotter import *
 
-def make_clusterbank(home_dir, *, dump=True, kilosort2=False):
+
+# def find_amplitudes(home_dir, num_chans, *, dat_name = '100_CHs.dat', test_chan = '100_CH1.continuous', order='F'):
+# 	test_chan = oe.loadContinuous2(os.path.join(home_dir, test_chan))
+# 	dat_file = np.memmap(os.path.join(home_dir), dtype=np.int16, shape = ((num_chans, len(test_chan['data']))), order=order)
+	
+
+
+def make_clusterbank_basic(home_dir, *, dump=True, kilosort2=False):
 	'''
 	Makes clusterbanks with info about the clusters isolated from kilosort
 
@@ -78,17 +86,10 @@ def make_clusterbank(home_dir, *, dump=True, kilosort2=False):
 
 	# Run through all the clusters
 	for cluster in all_clusters:
+
 		c_times = times[(clusters==cluster)]
 		c_template_ids = spike_templates[(clusters==cluster)]
 		c_templates = templates[np.unique(c_template_ids)]
-		max_chan = 0
-		template_maxes = {}
-		for clus_temp in c_templates:
-			# Used only if a cluster comes from a merge
-			chan_sums = [abs(sum(j)) for j in clus_temp.T]
-			template_maxes[max(chan_sums)] = np.argmax(chan_sums)
-		chan_max = template_maxes[max(template_maxes.keys())]
-		file_max = int(chan_map[chan_max]) + 1
 
 		if kilosort2:
 			amp = cluster_amp[cluster]
@@ -100,19 +101,60 @@ def make_clusterbank(home_dir, *, dump=True, kilosort2=False):
 			ks_label = None
 
 		if cluster in good_clusters:
-			good_units[cluster] = {'contamination':contam,'amplitude':amp,'max_chan':chan_max, 'file_max':file_max, 'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			good_units[cluster] = {'KScontamination':contam,'KSamplitude':amp, 'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in mua_clusters:
-			mua_units[cluster] = {'contamination':contam,'amplitude':amp,'max_chan':chan_max, 'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			mua_units[cluster] = {'KScontamination':contam,'KSamplitude':amp,   'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in noise_clusters:
-			noise_units[cluster] = {'contamination':contam,'amplitude':amp,'max_chan':chan_max,'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			noise_units[cluster] = {'KScontamination':contam,'KSamplitude':amp,'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 
 
 	# Turn all the unit dicts into one big dict
 	cluster_dict = {'header':header, 'good_units':good_units, 'mua_units':mua_units, 'noise_units':noise_units, 'chan_dict':chan_dict}
 	if dump:
-		pickle.dump(cluster_dict, open(os.path.join(home_dir, 'clusterbank.pkl'), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+		pickle.dump(cluster_dict, open(os.path.join(home_dir, 'clusterbank_basic.pkl'), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 	
 	return cluster_dict
+
+def find_amplitudes(dat_loc, num_of_chans,  spike_times, *, bitvolts=0.195, order='F'):
+	dat_file = np.memmap(dat_loc, dtype=np.int16)
+	time_length = int(len(dat_file)/num_of_chans)
+	dat_file = dat_file.reshape((num_of_chans, time_length), order=order)
+	cluster_spikes = []
+	for i in range(num_of_chans):
+		cluster_spikes.append(find_cluster_spikes(dat_file[i], spike_times)[1])
+	max_cluster_chan = find_max_chan(cluster_spikes)
+	amps = [min(i)*bitvolts for i in cluster_spikes[max_cluster_chan]]
+	return amps, max_cluster_chan
+
+def find_max_chan(cluster_spikes):
+	'''
+	Finds the average maximal spike across all channels and returns the channel number (in python notation so 0 index) and the average spike of that channel
+	'''
+	mean_cluster_spikes = [np.mean(i, axis=0) for i in cluster_spikes]
+	max_cluster_chan = np.argmin([min(i) for i in mean_cluster_spikes])
+	return max_cluster_chan
+
+def make_clusterbank_full(home_dir, num_of_chans, *, bitvolts=0.195, order='F', kilosort2=False, dump=True, dat_name='100_CHs.dat'):
+	'''
+	Makes a clusterbank with all the information 
+	'''
+	clusterbank_basic = make_clusterbank_basic(home_dir, dump=False, kilosort2=kilosort2)
+	print('Done making basic clusterbank')
+	for unit_type in clusterbank_basic:
+		if unit_type != 'header':
+			print('Doing', unit_type, 'units now')
+			for cluster_num in clusterbank_basic[unit_type]:
+				print('Doing cluster', cluster_num)
+				cluster = clusterbank_basic[unit_type][cluster_num]
+				spike_times = cluster['times']
+				dat_loc = os.path.join(home_dir, dat_name)
+				print('Finding amps for', len(spike_times), 'spikes')
+				amps, max_cluster_chan = find_amplitudes(dat_loc, num_of_chans, spike_times, bitvolts=bitvolts, order=order)
+				cluster['amps'] = amps
+				cluster['max_chan'] = max_cluster_chan
+	if dump:
+		pickle.dump(clusterbank_basic, open(os.path.join(home_dir, 'clusterbank_full.pkl'), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+	return clusterbank_basic
 
 if __name__ == '__main__':
 
