@@ -144,6 +144,7 @@ def make_clusterbank_full(home_dir, num_of_chans, *, bitvolts=0.195, order='F', 
 	'''
 	if dat:
 		data_loc = os.path.join(home_dir, dat_name)
+
 	else:
 		data_loc = home_dir
 
@@ -163,6 +164,24 @@ def make_clusterbank_full(home_dir, num_of_chans, *, bitvolts=0.195, order='F', 
 	if dump:
 		pickle.dump(clusterbank_basic, open(os.path.join(home_dir, 'clusterbank_full.pkl'), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 	return clusterbank_basic
+
+def make_clusterbank_full_amps(home_dir, num_of_chans, *, amp_loc = 'cluster_amplitudes', kilosort2=False, dump=True):
+	clusterbank_basic = make_clusterbank_basic(home_dir, dump=False, kilosort2=kilosort2)
+	for unit_type in clusterbank_basic:
+		if 'unit' in unit_type:
+			print('Doing', unit_type, 'now')
+			for cluster_num in clusterbank_basic[unit_type]:
+				print('Doing cluster', cluster_num)
+				cluster = clusterbank_basic[unit_type][cluster_num]
+				spike_times = cluster['times']
+				amps_dict = pickle(open(os.path.join(home_dir, amp_loc, 'cluster_%d.pkl' % cluster_num)))
+				cluster['amps'] = amps_dict['amps']
+				cluster['max_chan'] = amps_dict['max_cluster_chan']
+	if dump:
+		pickle.dump(clusterbank_basic, open(os.path.join(home_dir, 'clusterbank_full.pkl'), 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+	return clusterbank_basic
+
+
 
 if __name__ == '__main__':
 
