@@ -174,7 +174,7 @@ def make_clusterbank_full_amps(home_dir, num_of_chans, *, amp_loc = 'cluster_amp
 				print('Doing cluster', cluster_num)
 				cluster = clusterbank_basic[unit_type][cluster_num]
 				spike_times = cluster['times']
-				amps_dict = pickle(open(os.path.join(home_dir, amp_loc, 'cluster_%d.pkl' % cluster_num)))
+				amps_dict = pickle(open(os.path.join(home_dir, amp_loc, 'cluster_%d.pkl' % cluster_num), 'rb')).load()
 				cluster['amps'] = amps_dict['amps']
 				cluster['max_chan'] = amps_dict['max_cluster_chan']
 	if dump:
