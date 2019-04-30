@@ -23,9 +23,9 @@ for cluster_num in clusterbank['good_units']:
 	cluster = clusterbank['good_units'][cluster_num]
 	data_chan = int(cluster['max_chan'] +1 )
 	spike_times = cluster['times']
- 	data = oe.loadContinuous2(os.path.join(home_dir, '100_CH%d.continuous' % data_chan))['data']
+	data = oe.loadContinuous2(os.path.join(home_dir, '100_CH%d.continuous' % data_chan))['data']
 	spike_x, cluster_spikes = find_cluster_spikes(data, spike_times)
-	
+
 	cluster_times = [int(i[0]) for i in cluster['times']]
 	cluster_times = np.array(cluster_times)
 
