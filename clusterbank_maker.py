@@ -154,9 +154,9 @@ def find_amplitudes(data_loc, num_of_chans,  spike_times, *, dat=False, bitvolts
 
 	# If using the dat file, scale by the bitvolts
 	if dat:
-		amps = [min(i)*bitvolts for i in cluster_spikes[max_cluster_chan]]
+		amps = [i[30]*bitvolts for i in cluster_spikes[max_cluster_chan]]
 	else:
-		amps = [min(i) for i in cluster_spikes[max_cluster_chan]]
+		amps = [i[30] for i in cluster_spikes[max_cluster_chan]]
 	return amps, max_cluster_chan
 
 def find_max_chan(cluster_spikes):

@@ -4,6 +4,12 @@ import os
 import sys
 from cluster_spike_plotter import *
 from clusterbank_maker import *
+import psutil
+
+# Magic code - but doesnt seem to do much this time
+available_cpu_count = len(psutil.Process().cpu_affinity())
+os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
+
 
 home_dir = '/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49'
 
