@@ -13,7 +13,7 @@ os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
 
 home_dir = '/home/camp/warnert/working/Recordings/190410/2019-04-10_15-04-49'
 
-num_of_chans= 64
+num_of_chans= 32
 bit_volts=0.195
 
 clusterbank = pickle.Unpickler(open(os.path.join(home_dir, 'clusterbank_full.pkl'), 'rb')).load()
@@ -38,6 +38,10 @@ for cluster_num in clusterbank['good_units']:
 	bins = spike_correlation(cluster_times)
 	trial_spike_times = find_trial_spike_times(trial_starts, cluster['times'])
 	recording_len = len(data)
-	output_loc = os.path.join(home_dir, 'cluster_plots', 'cluster_%d.png' % cluster_num)
+	output_dir = os.path.join(home_dir, 'cluster_plots')
+	if not os.path.isdir(output_dir):
+		os.mkdir(output_dir)
+	output_loc = os.path.join(output_dir, 'cluster_%d.png' % cluster_num)
+	
 	together_plot(spike_x, cluster_spikes, bins, window_size, bin_size, trial_spike_times, trial_length, cluster_num, cluster, recording_len, output_loc)
 	plt.clf()
