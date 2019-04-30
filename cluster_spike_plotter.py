@@ -205,7 +205,7 @@ def together_plot(spike_x, cluster_spikes, bins, window_size, bin_size, trial_sp
 	corr_x = list(np.arange(-window_size, 0, bin_size)) + list(np.arange(bin_size, bin_size+window_size, bin_size))
 	ax[0, 1].bar(corr_x, bins, width=bin_size)
 	ax[0, 1].set_ylabel('Spike count')
-	ax[0, 1].set_xlim('Time (ms)')
+	ax[0, 1].set_xlabel('Time (ms)')
 	ax[0, 1].set_xlim(-window_size, window_size)
 
 	# Third plot, the raster plot
