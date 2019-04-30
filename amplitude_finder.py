@@ -20,8 +20,8 @@ cluster_num = list(sys.argv)[1]
 cluster_num = int(cluster_num)
 
 # Stop if this cluster has already been run
-if os.path.isfile(os.path.join(output_dir, 'cluster_%d.pkl' % cluster_num)):
-	sys.exit()
+# if os.path.isfile(os.path.join(output_dir, 'cluster_%d.pkl' % cluster_num)):
+# 	sys.exit()
 
 # Check if the clusterbank_basic already exits and if not, then make one
 clusterbank_loc = os.path.join(home_dir, 'clusterbank_basic.pkl')
