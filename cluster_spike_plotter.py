@@ -222,7 +222,7 @@ def together_plot(spike_x, cluster_spikes, bins, window_size, bin_size, trial_sp
 	ax[1, 1].scatter(cluster['times']/fs, flip_amps)
 	ax[1, 1].set_ylabel('Amplitude ($\mu$V)')
 	ax[1, 1].set_xlabel('Time (s)')
-	ax[1, 1].set_xlim(0, recording_length)
+	ax[1, 1].set_xlim(0, recording_length/fs)
 	ax[1, 1].set_ylim(0)
 
 	# Extra subplot to hold the title etc
