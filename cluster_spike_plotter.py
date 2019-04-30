@@ -8,6 +8,7 @@ import psutil
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
+import math
 import openephys as oe
 
 def find_cluster_spikes(data, spike_times, *, pre_spike_length = 30, post_spike_length = 60):
