@@ -114,10 +114,10 @@ def spike_correlation(times, *, window_size=100, bin_size=1, fs_millisecond=30):
 		relative_times = np.array(times - time)
 
 		#Find times in a window around the chosen spike time - ignoring 0
-		window_relative_times = relative_times[(-window_size*fs<relative_times) & (relative_times < window_size*fs) & (relative_times != 0)]
+		window_relative_times = relative_times[(-window_size*fs_millisecond<relative_times) & (relative_times < window_size*fs_millisecond) & (relative_times != 0)]
 		
 		# Translating the relative window times to bin values
-		window_relative_times = [math.floor(i/bin_size/fs) + num_of_bins for i in window_relative_times]
+		window_relative_times = [math.floor(i/bin_size/fs_millisecond) + num_of_bins for i in window_relative_times]
 		
 		# Assigning them to the bins
 		for i in window_relative_times:
