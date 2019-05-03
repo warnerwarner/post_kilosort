@@ -113,11 +113,11 @@ def make_clusterbank_basic(home_dir, *, dump=True, kilosort2=True):
 			ks_label = None
 
 		if cluster in good_clusters:
-			good_units[cluster] = {'max_chan':max_chan, 'file_max':file_max, 'KScontamination':contam,'KSamplitude':amp, 'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			good_units[cluster] = {'max_chan':chan_max, 'file_max':file_max, 'KScontamination':contam,'KSamplitude':amp, 'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in mua_clusters:
-			mua_units[cluster] = {'max_chan':max_chan, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,   'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			mua_units[cluster] = {'max_chan':chan_max, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,   'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in noise_clusters:
-			noise_units[cluster] = {'max_chan':max_chan, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			noise_units[cluster] = {'max_chan':chan_max, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 
 
 	# Turn all the unit dicts into one big dict
