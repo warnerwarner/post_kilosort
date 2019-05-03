@@ -96,7 +96,7 @@ def make_clusterbank_basic(home_dir, *, dump=True, kilosort2=True):
 			chan_sums = [abs(sum(j)) for j in clus_temp.T]
 			template_maxes[max(chan_sums)] = np.argmax(chan_sums)
 		chan_max = template_maxes[max(template_maxes.keys())]
-		file_max = int(chan_map[channel_max]) + 1
+		file_max = int(chan_map[chan_max]) + 1
 
 
 		c_times = times[(clusters==cluster)]
