@@ -89,6 +89,19 @@ def make_clusterbank_basic(home_dir, *, dump=True, kilosort2=True):
 		c_times = times[(clusters==cluster)]
 		c_template_ids = spike_templates[(clusters==cluster)]
 		c_templates = templates[np.unique(c_template_ids)]
+		max_chan = 0
+		template_maxes = {}
+		for clus_temp in c_templates:
+			# Used only if a cluster comes from a merge
+			chan_sums = [abs(sum(j)) for j in clus_temp.T]
+			template_maxes[max(chan_sums)] = np.argmax(chan_sums)
+		chan_max = template_maxes[max(template_maxes.keys())]
+		file_max = int(chan_map[channel_max]) + 1
+
+
+		c_times = times[(clusters==cluster)]
+		c_template_ids = spike_templates[(clusters==cluster)]
+		c_templates = templates[np.unique(c_template_ids)]
 
 		if kilosort2:
 			amp = cluster_amp[cluster]
@@ -100,11 +113,11 @@ def make_clusterbank_basic(home_dir, *, dump=True, kilosort2=True):
 			ks_label = None
 
 		if cluster in good_clusters:
-			good_units[cluster] = {'KScontamination':contam,'KSamplitude':amp, 'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			good_units[cluster] = {'max_chan':max_chan, 'file_max':file_max, 'KScontamination':contam,'KSamplitude':amp, 'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in mua_clusters:
-			mua_units[cluster] = {'KScontamination':contam,'KSamplitude':amp,   'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			mua_units[cluster] = {'max_chan':max_chan, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,   'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in noise_clusters:
-			noise_units[cluster] = {'KScontamination':contam,'KSamplitude':amp,'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			noise_units[cluster] = {'max_chan':max_chan, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 
 
 	# Turn all the unit dicts into one big dict
