@@ -34,7 +34,7 @@ def find_trials(home_dir, *,add_chan_prefix='100_ADC', add_chans_nums=[2,3,4,5],
 	add_chans = []
 
 	# Run through all the additional files
-	for i in additonal_channels:
+	for i in additional_channels:
 		chan= oe.loadContinuous2(os.path.join(home_dir, i))
 		data = chan['data']
 		add_chans.append(data)
