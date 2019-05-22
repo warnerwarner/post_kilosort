@@ -9,7 +9,7 @@ from tqdm import tqdm
 import psutil
 from cluster_spike_plotter import *
 
-def make_clusterbank_basic(home_dir, *, dump=True, kilosort2=True):
+def make_clusterbank_basic(home_dir, num_of_chans, *, dump=True, kilosort2=True):
 	'''
 	Makes clusterbanks with info about the clusters isolated from kilosort
 
@@ -63,7 +63,7 @@ def make_clusterbank_basic(home_dir, *, dump=True, kilosort2=True):
 	all_clusters= np.concatenate((good_clusters, mua_clusters, noise_clusters))
 
 	# Make a nice little header	
-	header = {'home_dir':home_dir, 'date':date, 'kilosort2':kilosort2, 'good_clusters':good_clusters, 'mua_clusters':mua_clusters, 'noise_clusters':noise_clusters}
+	header = {'home_dir':home_dir, 'date':date, 'num_of_chans': num_of_chans,'kilosort2':kilosort2, 'good_clusters':good_clusters, 'mua_clusters':mua_clusters, 'noise_clusters':noise_clusters}
 
 	# Load in all the post kilosort stuff
 	times = np.load(os.path.join(home_dir, 'spike_times.npy'))
@@ -113,11 +113,11 @@ def make_clusterbank_basic(home_dir, *, dump=True, kilosort2=True):
 			ks_label = None
 
 		if cluster in good_clusters:
-			good_units[cluster] = {'max_chan':chan_max, 'file_max':file_max, 'KScontamination':contam,'KSamplitude':amp, 'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			good_units[cluster] = {'cluster_num':cluster, 'max_chan':chan_max, 'file_max':file_max, 'KScontamination':contam,'KSamplitude':amp, 'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in mua_clusters:
-			mua_units[cluster] = {'max_chan':chan_max, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,   'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			mua_units[cluster] = {'cluster_num':cluster, 'max_chan':chan_max, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,   'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 		elif cluster in noise_clusters:
-			noise_units[cluster] = {'max_chan':chan_max, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
+			noise_units[cluster] = {'cluster_num':cluster, 'max_chan':chan_max, 'file_max':file_max,'KScontamination':contam,'KSamplitude':amp,'file_max':file_max,  'KSlabel':ks_label, 'unique_temps_ids':np.unique(c_template_ids), 'times':c_times, 'template_ids':c_template_ids, 'templates':c_templates}
 
 
 	# Turn all the unit dicts into one big dict

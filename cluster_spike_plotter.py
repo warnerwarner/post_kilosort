@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import pickle
 import math
 import openephys as oe
+from tqdm import tqdm
 
 def find_cluster_spikes(data, spike_times, *, pre_spike_length = 30, post_spike_length = 60):
 	'''
@@ -22,7 +23,7 @@ def find_cluster_spikes(data, spike_times, *, pre_spike_length = 30, post_spike_
 		Times at which the cluster is believed to have spiked
 	'''
 	cluster_spikes = []
-	for i in spike_times:
+	for i in tqdm(spike_times):
 		spike = data[int(i-pre_spike_length):int(i+post_spike_length)]
 		cluster_spikes.append(spike - np.median(spike))
 	x = np.arange(-int(pre_spike_length/30), int(post_spike_length/30), 1/30)
@@ -41,7 +42,7 @@ def find_trial_spike_times(trial_starts, spike_times, *, trial_length=5, fs=3000
 		Times that spikes are found
 	'''
 	trial_spike_times = []
-	for i in trial_starts:
+	for i in tqdm(trial_starts):
 		init = i - trial_length*fs
 		end = i + 2*trial_length*fs 
 		reset_spike_times = spike_times[(spike_times > init)& (spike_times < end)] - float(i)
