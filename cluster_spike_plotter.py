@@ -8,7 +8,9 @@ import psutil
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
+import math
 import openephys as oe
+from tqdm import tqdm
 
 def find_cluster_spikes(data, spike_times, *, pre_spike_length = 30, post_spike_length = 60):
 	'''
@@ -21,10 +23,10 @@ def find_cluster_spikes(data, spike_times, *, pre_spike_length = 30, post_spike_
 		Times at which the cluster is believed to have spiked
 	'''
 	cluster_spikes = []
-	for i in spike_times:
+	for i in tqdm(spike_times):
 		spike = data[int(i-pre_spike_length):int(i+post_spike_length)]
 		cluster_spikes.append(spike - np.median(spike))
-	x = np.arange(0, int((pre_spike_length+post_spike_length)/30), 1/30)
+	x = np.arange(-int(pre_spike_length/30), int(post_spike_length/30), 1/30)
 	cluster_spikes = np.array(cluster_spikes)
 
 	return x, cluster_spikes
@@ -50,9 +52,15 @@ def find_trial_spike_times(trial_starts, spike_times, *, trial_length=5, fs=3000
 		The length, as a function of the trial_length that is to be included post stimuli
 	'''
 	trial_spike_times = []
+<<<<<<< HEAD
 	for i in trial_starts:
 		init = i - trial_length*fs*pre_trial_length
 		end = i + trial_length*fs + trial_length*fs*post_trial_length
+=======
+	for i in tqdm(trial_starts):
+		init = i - trial_length*fs
+		end = i + 2*trial_length*fs 
+>>>>>>> a675aea8d1a70337a68b03ae68913cb85c16c267
 		reset_spike_times = spike_times[(spike_times > init)& (spike_times < end)] - float(i)
 		trial_spike_times.append(reset_spike_times/fs)
 	return trial_spike_times
@@ -98,45 +106,151 @@ def raster_plot(trial_spike_times, output_loc):
 	plt.axvline(trial_length, color='r')
 	plt.savefig(output_loc, dpi=300)
 
-def together_plot(x, cluster_spikes, trial_spike_times, cluster_num, channel_num, output_loc, *, plot_limits=True):
+def spike_correlation(times, *, window_size=100, bin_size=1, fs_millisecond=30):
 	'''
-	Plots a double figure with the avg spike plot and the raster plot
+	Creates a set of bins which contains the number of spikes detected after another spike. For use with correlogram
 
 	Arguments:
-	x:
+	times:
+		Times of the spikes in samples
+
+	Optional arguments:
+	window_size:
+		Size of the window around spikes that will be considered in milliseconds default = 100
+	bin_size:
+		Size of the bins for the spikes in milliseconds default = 1
+	fs_millisecond:
+		The sampling rate in milliseconds default = 30
+	'''
+
+	# Find the number of bins in one direction
+	num_of_bins = int(window_size/bin_size)
+	# Initilise empty bins
+	bins = np.zeros(2*num_of_bins)
+
+	for index, time in enumerate(times):
+		relative_times = np.array(times - time)
+
+		#Find times in a window around the chosen spike time - ignoring 0
+		window_relative_times = relative_times[(-window_size*fs_millisecond<relative_times) & (relative_times < window_size*fs_millisecond) & (relative_times != 0)]
+		
+		# Translating the relative window times to bin values
+		window_relative_times = [math.floor(i/bin_size/fs_millisecond) + num_of_bins for i in window_relative_times]
+		
+		# Assigning them to the bins
+		for i in window_relative_times:
+			bins[i] += 1
+	return bins
+
+def correlelogram(bins, output_loc, *, window_size=100, bin_size=1):
+	'''
+	Plot an auto-correlelogram of all the spike times
+
+	Arguments:
+	bin:
+		The binned count of the spikes
+	output_loc:
+		Location to save the figure
+
+	Optional arguments;
+	window_size:
+		Size of the around the spike that is being counted in milliseconds
+	bin_size:
+		Size of the bins in milliseconds
+	'''
+	x = list(np.arange(-window_size, 0, bin_size)) + list(np.arange(bin_size, bin_size+window_size, bin_size))
+
+	plt.bar(x, np.arange(-window_size, window_size, bin_size))
+	plt.xlabel('Time (ms)')
+	plt.ylabel('Spike counts')
+	plt.savefig(output_loc, dpi=300)
+
+def amplitude_plot(amps, times, output_loc, *, fs = 30000):
+	flip_amps = [-i for i in amps]
+	plt.scatter(times/fs, flip_amps, s=0.5, alpha=0.5)
+	plt.ylabel('Peak amplitude ($\mu$V)')
+	plt.xlabel('Time (s)')
+	plt.savefig(output_loc, dpi=300)
+
+
+def together_plot(spike_x, cluster_spikes, bins, window_size, bin_size, trial_spike_times, trial_length, cluster_num, cluster, recording_length, output_loc, *, fs= 30000):
+	
+
+	'''
+	Plots a 4 part figure with average spike, trial response, amplitude, and autocorrelelogram
+
+	Arguments:
+	spike_x:
 		Time series for the spike plot
 	cluster_spikes:
 		Array of arrays of channel recordings from around the spikes detected and assigned to this cluster
+	bins:
+		The binned spikes for the autocorreleogram in milliseconds
+	window_size:
+		Size of the window of the autocorrelelogram in milliseconds
+	bin_size:
+		Size of the bins in the autocorrelelogram in milliseconds
 	trial_spike_times:
-		Times the unit spiked during a trial
+		Times the unit spiked during a trial for use in the raster
+	trial_length:
+		Length of the trials for use in the raster
 	cluster_num:
 		The number of the cluster (for use in the plot title)
-	channel_num:
-		The number of the channel (for use in the plot title)
+	cluster:
+		The cluster from the clusterbank
+	recording_length:
+		Length of the recording in samples not seconds
 	output_loc:
 		Location to save the plot
 
 	Optional arguments:
-	plot_limits:
-		Set the y limits of the plots, on True weights it on the maximum negative value of the spike
+	fs:
+		Sampling frequency, default = 30000
 	'''
-	fig, ax = plt.subplots(1, 2, figsize=(10, 4))
 
-	avg_spike = np.mean(cluster_spikes, axis=0)
-	ax[0].plot(x, cluster_spikes.T, color='gray')
-	ax[0].plot(x,avg_spike)
-	ax[0].set_xlabel('Time (ms)')
-	ax[0].set_ylabel('Voltage ($\mu$V)')
-	if plot_limits:
-		ax[0].set_ylim([min(avg_spike)*1.1, -min(avg_spike)*0.3])
+	# Set up the figure
+	fig, ax = plt.subplots(2, 2, figsize=(10, 10))
 
-	ax[1].eventplot(trial_spike_times, colors='k')
-	ax[1].set_ylabel('Trial number')
-	ax[1].set_xlabel('Time (s)')
-	ax[1].axvline(0, color='r')
-	ax[1].axvline(5, color='r')
-	plt.title('Cluster %d, channel %d' % (cluster_num, channel_num))
+	# First plot, the average cluster spike
+	ax[0, 0].plot(spike_x, cluster_spikes.T, color='lightgray')
+	ax[0, 0].plot(spike_x, np.mean(cluster_spikes, axis=0))
+	ax[0, 0].set_ylabel('Time (ms)')
+	ax[0, 0].set_xlabel('Time (ms)')
+	ax[0, 0].set_xlim(-1, 2)
+
+	# Second plot, the correlelogram
+	corr_x = list(np.arange(-window_size, 0, bin_size)) + list(np.arange(bin_size, bin_size+window_size, bin_size))
+	ax[0, 1].bar(corr_x, bins, width=bin_size)
+	ax[0, 1].set_ylabel('Spike count')
+	ax[0, 1].set_xlabel('Time (ms)')
+	ax[0, 1].set_xlim(-window_size, window_size)
+
+	# Third plot, the raster plot
+	ax[1, 0].eventplot(trial_spike_times, color='k')
+	ax[1, 0].axvline(0, color='r')
+	ax[1, 0].axvline(trial_length, color='r')
+	ax[1, 0].set_ylabel('Trial')
+	ax[1, 0].set_xlabel('Time (s)')
+	ax[1, 0].set_ylim(-0.5, len(trial_spike_times)-0.5)
+	ax[1, 0].set_xlim(-trial_length, 2*trial_length)
+
+	#Fourth plot, the amplitudes
+	flip_amps = [-i for i in cluster['amps']] # Flip the amplitudes to be positive
+	ax[1, 1].scatter(cluster['times']/fs, flip_amps, s=0.5, alpha=0.5)
+	ax[1, 1].set_ylabel('Amplitude ($\mu$V)')
+	ax[1, 1].set_xlabel('Time (s)')
+	ax[1, 1].set_xlim(0, recording_length/fs)
+	ax[1, 1].set_ylim(0)
+
+	# Extra subplot to hold the title etc
+	fig.add_subplot(111, frameon=False)
+	# hide tick and tick label of the big axes
+	plt.tick_params(labelcolor='none', top='off', bottom='off', left='off', right='off')
+	plt.grid(False)
+	plt.title('Cluster %d' % cluster_num)
+	plt.tight_layout()
 	plt.savefig(output_loc, dpi=300)
+
 
 def cluster_comparision(clusters, all_cluster_spikes):
 	'''
