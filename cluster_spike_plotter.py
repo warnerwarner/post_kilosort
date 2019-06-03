@@ -29,7 +29,7 @@ def find_cluster_spikes(data, spike_times, *, pre_spike_length = 30, post_spike_
 
 	return x, cluster_spikes
 
-def find_trial_spike_times(trial_starts, spike_times, *, trial_length=5, fs=30000):
+def find_trial_spike_times(trial_starts, spike_times, *, trial_length=5, fs=30000, pre_trial_length=1, post_trial_length=1):
 	'''
 	Finds spikes that are present in, or in a window around a trial and returns then as an k x t array
 
@@ -38,11 +38,21 @@ def find_trial_spike_times(trial_starts, spike_times, *, trial_length=5, fs=3000
 		Times the trials start
 	spike_times:
 		Times that spikes are found
+
+	Optional arguments:
+	trial_length:
+		Length of the trials
+	fs:
+		Sampling frequency
+	pre_trial_length:
+		The length, as a function of the trial_length that is be included pre stimuli
+	post_trial_length:
+		The length, as a function of the trial_length that is to be included post stimuli
 	'''
 	trial_spike_times = []
 	for i in trial_starts:
-		init = i - trial_length*fs
-		end = i + 2*trial_length*fs 
+		init = i - trial_length*fs*pre_trial_length
+		end = i + trial_length*fs + trial_length*fs*post_trial_length
 		reset_spike_times = spike_times[(spike_times > init)& (spike_times < end)] - float(i)
 		trial_spike_times.append(reset_spike_times/fs)
 	return trial_spike_times
