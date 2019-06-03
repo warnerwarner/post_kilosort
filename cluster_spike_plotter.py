@@ -52,15 +52,10 @@ def find_trial_spike_times(trial_starts, spike_times, *, trial_length=5, fs=3000
 		The length, as a function of the trial_length that is to be included post stimuli
 	'''
 	trial_spike_times = []
-<<<<<<< HEAD
-	for i in trial_starts:
+	for i in tqdm(trial_starts):
 		init = i - trial_length*fs*pre_trial_length
 		end = i + trial_length*fs + trial_length*fs*post_trial_length
-=======
-	for i in tqdm(trial_starts):
-		init = i - trial_length*fs
-		end = i + 2*trial_length*fs 
->>>>>>> a675aea8d1a70337a68b03ae68913cb85c16c267
+
 		reset_spike_times = spike_times[(spike_times > init)& (spike_times < end)] - float(i)
 		trial_spike_times.append(reset_spike_times/fs)
 	return trial_spike_times
