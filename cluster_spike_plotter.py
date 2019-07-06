@@ -266,6 +266,8 @@ def jULIE_16_chan_plotter(data, cluster_times, cluster_num):
 
 	fig, ax = plt.subplots(2, 8, sharey=True)
 	spike_time = np.arange(-1, 2, 1/30)
+	min_spike = math.inf
+	max_spike =0 
 	big_chan = 17
 	smol_chan = 17
 	for i in range(16):
