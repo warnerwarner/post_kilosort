@@ -268,9 +268,7 @@ def jULIE_16_chan_plotter(data, cluster_times, cluster_num):
 	spike_time = np.arange(-1, 2, 1/30)
 	big_chan = 17
 	smol_chan = 17
-	spike = ()
 	for i in range(16):
-		ax[int(i/8), i%8].plot(spike_time, spike)
 		spike = (mean_spikes[i] - np.median(mean_spikes[i]))*0.195
 		ax[int(i/8), i%8].plot(spike_time, spike, color='k')
 		ax[int(i/8), i%8].axis('off')
