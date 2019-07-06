@@ -246,6 +246,47 @@ def together_plot(spike_x, cluster_spikes, bins, window_size, bin_size, trial_sp
 	plt.tight_layout()
 	plt.savefig(output_loc, dpi=300)
 
+def jULIE_16_chan_plotter(data, cluster_times, cluster_num):
+	'''
+	Plots a 16 channel jULIE plot of average waveforms
+
+	Arguments:
+	data:
+		Array of all data in format of chan_num x time_points
+	cluster_times:
+		The times the cluster spiked
+	cluster_num:
+		The number of the cluster
+	'''
+
+	all_spikes = [data[:, int(i-30:int(i+60))] for i in cluster_times]
+	all_spikes = np.array(all_spikes)
+	mean_spikes = np.mean(all_spikes, axis=0)
+
+
+	fig, ax = plt.subplots(2, 8, sharey=True)
+	spike_time = np.arange(-1, 2, 1/30)
+	big_chan = 17
+	smol_chan = 17
+	spike = ()
+	for i in range(16):
+		ax[int(i/8), i%8].plot(spike_time, spike)
+		spike = (mean_spikes[i] - np.median(mean_spikes[i]))*0.195
+		ax[int(i/8), i%8].plot(spike_time, spike, color='k')
+		ax[int(i/8), i%8].axis('off')
+		var = max(spike)- min(spike)
+		if var < min_spike:
+			min_spike = var
+			smol_chan = i
+		if var > max_spike:
+			max_spike = var
+			big_chan = i
+	ax[int(smol_chan/8), smol_chan%8].plot([-1, -1], [min(plot_spikes[big_chan]), min(plot_spikes[big_chan])+100], color='k')
+	ax[int(smol_chan/8), smol_chan%8].plot([-1, 0], [min(plot_spikes[big_chan]), min(plot_spikes[big_chan])], color='k')
+	ax[int(smol_chan/8), smol_chan%8].text(-4.5, min(plot_spikes[big_chan])+40, '100 $\mu$V')
+	ax[int(smol_chan/8), smol_chan%8].text(-1, min(plot_spikes[big_chan])-30, '1 ms')
+	fig.suptitle('Cluster %d' % cluster_num)
+	plt.show()
 
 def cluster_comparision(clusters, all_cluster_spikes):
 	'''

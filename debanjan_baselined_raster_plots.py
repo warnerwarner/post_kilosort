@@ -18,7 +18,6 @@ from scipy.signal import find_peaks
 def find_good_resps(respiration, peaks, *, trial_length=2, extra_window=5, fs=30000, width = 22000):
 	'''
 	Finds the starts and ends of respiration cycles which are not too gaspy and aren't inside a trial
-	
 	Arguments:
 	respiration:
 		respiration trace
@@ -43,13 +42,33 @@ def find_good_resps(respiration, peaks, *, trial_length=2, extra_window=5, fs=30
 		if end-start < 22000:
 			for trial in trial_starts:
 				if 0 < start - trial < fs*(trial_length + extra_window) or 0 < end - trial < fs*(trial_length + extra_window):
-					
+
 					in_trial = True
 
 			if not in_trial:
 				starts.append(i)
 				ends.append(j)
 	return starts, ends
+
+
+
+def baselined_psth():
+	'''
+	Makes a baseline subtracted psth
+	'''
+	trial_spikes = find_trial_spike_times(trial_starts, cluster_spikes, trial_length=trial_length)
+	for index, trial in enumerate(trial_spikes):
+		count = np.bincount(np.digitize(trial, trial_time, right=1))/bin_size
+		while len(count) < len(trial_time) + 1:
+			count = np.append(count, 0)
+		trial_start = trial_starts[index]
+		trial_resp = resp[trial_start - pre_trial_resp_window*fs:trial_start+fs*(post_trial_resp_window+trial_length)]
+		trial_peaks = find_peaks(trial_resp, height=[1.4, 2.2], distance=13000)
+		trial_sniff_spikes = []
+		for i, j in zip(trial_peaks[0][:-1], trial_peaks[0][1:]):
+			trial_sniff_spikes.extend([(k*(j-i) + i)/fs - 3 for k in sniff_spikes])
+		sniff_trial_time = np.arange(-pre_trial_resp_window, trial_length+post_trial_resp_window, bin_size)
+		
 
 
 # Set the directories and load in the starts and the respiration
@@ -93,20 +112,6 @@ trial_groups = [ac_trials, A_trials, B_trials, blank_trials]
 
 peaks = find_peaks(resp, height=[1.4, 2.2], distance=13000, prominence=0.1)
 
-
-starts = []
-ends = []
-for start, end in zip(peaks[0][:-1], peaks[0][1:]):
-	in_trial = False
-	#diffs.append(j-i)
-	if end-start < 22000:
-		for trial in trial_starts:
-			if 0 < start - trial < fs*(trial_length + extra_window) or 0 < end - trial < fs*(trial_length + extra_window):
-				in_trial = True
-
-		if not in_trial:
-			starts.append(i)
-			ends.append(j)
-
+starts, ends = find_good_resps(resp, peaks)
 
 trial_time = np.arange(-trial_length, 2*trial_length, bin_size)
