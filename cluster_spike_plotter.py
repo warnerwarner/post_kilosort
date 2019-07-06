@@ -270,6 +270,8 @@ def jULIE_16_chan_plotter(data, cluster_times, cluster_num):
 	max_spike =0 
 	big_chan = 17
 	smol_chan = 17
+
+	plot_spikes = []
 	for i in range(16):
 		spike = (mean_spikes[i] - np.median(mean_spikes[i]))*0.195
 		ax[int(i/8), i%8].plot(spike_time, spike, color='k')
@@ -281,6 +283,7 @@ def jULIE_16_chan_plotter(data, cluster_times, cluster_num):
 		if var > max_spike:
 			max_spike = var
 			big_chan = i
+		plot_spikes.append(spike)
 	ax[int(smol_chan/8), smol_chan%8].plot([-1, -1], [min(plot_spikes[big_chan]), min(plot_spikes[big_chan])+100], color='k')
 	ax[int(smol_chan/8), smol_chan%8].plot([-1, 0], [min(plot_spikes[big_chan]), min(plot_spikes[big_chan])], color='k')
 	ax[int(smol_chan/8), smol_chan%8].text(-4.5, min(plot_spikes[big_chan])+40, '100 $\mu$V')
