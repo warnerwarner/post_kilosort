@@ -259,7 +259,7 @@ def jULIE_16_chan_plotter(data, cluster_times, cluster_num):
 		The number of the cluster
 	'''
 
-	all_spikes = [data[:, int(i-30:int(i+60))] for i in cluster_times]
+	all_spikes = [data[:, int(i-30):int(i+60)] for i in cluster_times]
 	all_spikes = np.array(all_spikes)
 	mean_spikes = np.mean(all_spikes, axis=0)
 
