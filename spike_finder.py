@@ -15,7 +15,10 @@ def bandpass_data(data, fs= 30000, highcut=6000, lowcut = 300, order = 3):
 	y = signal.sosfiltfilt(sos, data)
 	return y
 
-def spike_find(bp_data):
+def single_chan_spike_find(bp_data, *, window=0.003, fs=30000):
+	w_fs = fs*window
+	all_spike_times = []
+	all_spike_vals = []
 	spike_times = []
 	sd = np.median(abs(bp_data)/0.6745)
 	data_times = []
@@ -27,6 +30,11 @@ def spike_find(bp_data):
 	spike_times.append(data_times)
 	return spike_times
 
+def find_spikes(dataloc, dtype, noc):
+	if dtype == 'dat':
+		load_dat(dataloc, noc)
+	elif dtype == 'continuous':
+		load_continuous(dataloc)
 
 available_cpu_count = len(psutil.Process().cpu_affinity())
 os.environ["MKL_NUM_THREADS"] = str(available_cpu_count)
